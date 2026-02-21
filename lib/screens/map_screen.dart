@@ -200,6 +200,8 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     setState(() { 
       _simulationState = SimulationState.stopped; 
       _simulationIndex = 0; 
+      _simulationState = SimulationState.stopped; 
+      _simulationIndex = 0; 
       _simulationSpeed = 1.0; 
       _actualTitle = ' '; 
       _polylines.clear(); 
@@ -381,7 +383,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('route_saved_msg').replaceAll('%s', targetHome.name))));
+      
+      // On réinitialise et on redirige vers HomesScreen comme pour la flèche retour
       _resetAllActivities();
+      Navigator.pushNamed(context, HomesScreen.id);
     }
   }
 

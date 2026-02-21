@@ -37,13 +37,17 @@ class _TracksScreenState extends State<TracksScreen> {
     });
   }
 
-  Future<bool> _checkPremium() async {
+  Future<bool> _checkPremiumArchives() async {
     if (!mounted) return false;
     final premiumState = context.read<PremiumState>();
+    
+    // FORCER le rechargement de l'état depuis les préférences pour être sûr
     await premiumState.initializationDone;
     
-    if (!mounted) return false;
-    if (premiumState.isPremium) return true;
+    // On vérifie à nouveau après l'initialisation
+    if (premiumState.isPremium || premiumState.isPremiumArchives) {
+      return true;
+    }
 
     if (!context.mounted) return false;
     final result = await showDialog<bool>(
@@ -51,15 +55,15 @@ class _TracksScreenState extends State<TracksScreen> {
       barrierDismissible: false,
       builder: (dialogContext) => Consumer<PremiumState>(
         builder: (context, state, child) {
-          if (state.isPremium) {
+          if (state.isPremium || state.isPremiumArchives) {
             return AlertDialog(
-              title: const Text("Premium Activé !"),
+              title: const Text("Accès Activé !"),
               content: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.check_circle, size: 64, color: Colors.green),
                   SizedBox(height: 16),
-                  Text("Votre achat a été reconnu. Vous pouvez maintenant archiver vos traces."),
+                  Text("Vous pouvez maintenant archiver vos traces."),
                 ],
               ),
               actions: [
@@ -94,8 +98,8 @@ class _TracksScreenState extends State<TracksScreen> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                onPressed: () => state.buyPremium(),
-                child: Text("${ol('premium_buy_label')} ${state.formattedPrice}", style: const TextStyle(color: Colors.white)),
+                onPressed: () => state.buyPremiumArchives(),
+                child: Text("${ol('premium_buy_label')} ${state.formattedPriceArchives}", style: const TextStyle(color: Colors.white)),
               ),
             ],
           );
@@ -113,14 +117,14 @@ class _TracksScreenState extends State<TracksScreen> {
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      extendBody: true, // Permet au contenu d'aller sous la barre de navigation
-      extendBodyBehindAppBar: false, // On garde l'AppBar au dessus pour l'instant
+      extendBody: true, 
+      extendBodyBehindAppBar: false, 
       appBar: AppBar(
         backgroundColor: Colors.brown,
         systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent, // Rend la barre d'état transparente
-          statusBarIconBrightness: Brightness.light, // Icônes blanches sur fond marron
-          systemNavigationBarColor: Colors.transparent, // Rend la barre de navigation transparente
+          statusBarColor: Colors.transparent, 
+          statusBarIconBrightness: Brightness.light, 
+          systemNavigationBarColor: Colors.transparent, 
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -386,8 +390,8 @@ class _TracksScreenState extends State<TracksScreen> {
                             messenger.showSnackBar(SnackBar(content: Text('${ol('track_renamed_snackbar')} "$newName".')));
                             break;
                           case 'archive':
-                            final isPremium = await _checkPremium();
-                            if (!mounted || !isPremium || selectedTracks.isEmpty) return;
+                            final hasArchiveAccess = await _checkPremiumArchives();
+                            if (!mounted || !hasArchiveAccess || selectedTracks.isEmpty) return;
 
                             await trackDataRef.archiveTracks(selectedTracks);
                             if (!mounted) return;

@@ -21,10 +21,12 @@ class PremiumState extends ChangeNotifier {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
 
+  // L'accès aux archives est autorisé si on a l'option archives OU le pack premium complet
   bool get isPremiumArchives => _isPremiumArchives || _isFullPremium;
   bool get isFullPremium => _isFullPremium;
   
-  bool get isPremium => isPremiumArchives; 
+  // isPremium représente le pack complet
+  bool get isPremium => _isFullPremium; 
 
   String get formattedPriceArchives => _priceArchives;
   String get formattedPricePack => _pricePack;
@@ -39,7 +41,6 @@ class PremiumState extends ChangeNotifier {
   Future<void> _init() async {
     await _loadPremiumState();
     _initializeInAppPurchase();
-    // Plus de restauration automatique pour éviter de forcer le mode premium
   }
 
   Future<void> _loadPremiumState() async {
@@ -109,13 +110,15 @@ class PremiumState extends ChangeNotifier {
     await _loadPremiumState();
   }
 
-  Future<void> setPremium(bool value) async {
-    await _setPremiumState(_keyFull, value);
-  }
-
   Future<bool> checkSecretCode(String code) async {
     if (code == "Traceo2024") {
-      await setPremium(!_isFullPremium);
+      // Toggle pour le Premium Complet
+      await _setPremiumState(_keyFull, !_isFullPremium);
+      return true;
+    }
+    if (code == "TraceoArchive") {
+      // Toggle pour simuler uniquement l'option Archive
+      await _setPremiumState(_keyArchives, !_isPremiumArchives);
       return true;
     }
     return false;
