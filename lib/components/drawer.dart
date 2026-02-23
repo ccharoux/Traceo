@@ -148,14 +148,27 @@ class AppDrawer extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              final success = await premiumState.checkSecretCode(codeController.text);
+              final code = codeController.text.trim();
+              final success = await premiumState.checkSecretCode(code);
               if (context.mounted) {
                 Navigator.pop(context);
+                
+                String message = "Code incorrect";
+                if (success) {
+                  if (code == "TraceoArchive" || code == "TraceArchive") {
+                    message = premiumState.isPremiumArchives 
+                        ? "Option Archives activée !" 
+                        : "Option Archives désactivée";
+                  } else {
+                    message = premiumState.isPremium 
+                        ? "Pack Premium activé !" 
+                        : "Pack Premium désactivé";
+                  }
+                }
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(success 
-                      ? (premiumState.isPremium ? "Mode Premium activé !" : "Mode Premium désactivé")
-                      : "Code incorrect"),
+                    content: Text(message),
                     duration: const Duration(seconds: 2),
                   ),
                 );

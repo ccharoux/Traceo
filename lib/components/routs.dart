@@ -198,15 +198,15 @@ const Map<String, List<String>> allTexts = {
 
   // VAC cards
   'doc_vac_title': ["Cartes VAC et aérodromes", "VAC maps and aerodromes", "Mapas VAC y aeródromos"],
-  'doc_vac_body_1': ["L'application permet de gérer des destinations que peuvent être des aérodromes. Si vous importez des destinations contenant des aérodromes, vous pourrez afficher les cartes VAC correspondantes.",
-    "The application allows you to manage destinations that can be aerodromes. If you import destinations containing aerodromes, you will be able to display the corresponding VAC maps.",
-    "La aplicación le permite gestionar destinos que pueden ser aeródromos. Si importa destinos que contienen aeródromos, podrá visualizar los mapas VAC correspondientes."],
+  'doc_vac_body_1': ["L'application permet de gérer des destinations qui peuvent être des aérodromes. Avec le Pack Premium, vous pourrez associer et afficher les cartes VAC correspondantes.",
+    "The application allows you to manage destinations that can be aerodromes. With the Premium Pack, you will be able to associate and display the corresponding VAC maps.",
+    "La aplicación le permite gestionar destinos que pueden ser aeródromos. Con el Pack Premium, podrá asociar y visualizar los mapas VAC correspondientes."],
   'doc_vac_body_2':
   ["Les cartes VAC sont des cartes d'approche à vue qui fournissent des informations essentielles aux pilotes. Une icône (",
     "VAC maps are visual approach charts that provide essential information to pilots. An icon (",
     "Los mapas VAC son cartas de aproximación visual que proporcionan información esencial a los pilotes. An icono ("],
   'doc_vac_body_3': [") s'affichera à côté des destinations qui sont des aérodromes.", ") will be displayed next to destinations that are aerodromes.", ") se mostrará junto a los destinos que son aeródromos."],
-  'doc_vac_body_4': ["Le pointeur vers la carte VAC d'un aérodrome est renseigné par l'utilisateur qui le cherche sur internet, lors de la création de la destination ou sur appui de l'icône orange.", "The pointer to the VAC chart of an aerodrome is provided by the user who searches for it on the internet, when creating the destination or by clicking the orange icon.", "El puntero a la carta VAC de un aeródromo lo proporciona el usuario que lo busca en Internet, al crear le destino o al hacer clic en le icono naranja."],
+  'doc_vac_body_4': ["Le pointeur vers la carte VAC d'un aérodrome est renseigné par l'utilisateur (réservé au Pack Premium) lors de la création de la destination ou sur appui de l'icône orange.", "The pointer to the VAC chart of an aerodrome is provided by the user (Premium Pack only) when creating the destination or by clicking the orange icon.", "El puntero a la carta VAC de un aeródromo lo proporciona el usuario (sólo Pack Premium), al crear le destino o al hacer clic en le icono naranja."],
   'doc_vac_body_5': ["L'icône devient alors verte, indiquant que la carte VAC est insérée dans le téléphone.",
     "The icon then turns green, indicating that the VAC card is loaded in the phone.",
     "Luego, le icono se vuelve verde, lo que indica que la tarjeta VAC está cargada en le téléphone."],
@@ -252,12 +252,17 @@ const Map<String, List<String>> allTexts = {
     "Route planning: Prepare your routes with multiple waypoints. The app automatically calculates distances and estimated flight times.",
     "Planificación de rutas: organice sus rutas con múltiples puntos de referencia. La aplicación calcula automáticamente las distancias y los tiempos de vuelo estimados."
   ],
+  'doc_premium_vac': [
+    "Cartes VAC : Gérez et visualisez les cartes d'approche à vue directement dans l'application pour vos destinations aérodromes.",
+    "VAC Charts: Manage and view visual approach charts directly in the app for your aerodrome destinations.",
+    "Cartas VAC: Gestione y visualice cartas de aproximación visual directamente en la aplicación para sus destinos de aeródromos."
+  ],
 
   'doc_final_title': ["Consommation et batterie", "Consumption and battery", "Consumo y batería"],
   'doc_final_body_1': ["L'application est conçue pour être économe en énergie. Cependant, l'utilisation continue du GPS peut diminuer la durée de vie de la batterie.", "The application is designed to be energy efficient. However, continuous use of GPS can decrease battery life.", "La aplicación está diseñada para ser eficiente en le consumo de energía. Sin embargo, le uso continuo del GPS puede disminuir la duración de la batterie."],
   'doc_final_body_2': ["Assurez-vous de désactiver le suivi lorsque vous ne l'utilisez pas pour préserver la batterie.", "Be sure to turn off tracking when not in use to conserve battery.", "Asegúrese de desactivar le seguimiento cuando no lo esté utilizando para conservar la batería."],
   'doc_final_body_3': ["Le suivi GPS fonctionne grâce à une notification permanente. Vous pouvez éteindre votre écran ou utiliser d'autres applications, le tracé continuera normalement.", "GPS tracking works thanks to a permanent notification. You can turn off your screen or use other apps, the track will continue normally.", "El seguimiento GPS funciona gracias a una notification permanente. Puede apagar su pantalla o utilizar otras aplicaciones, la traza continuará normalement."],
-  'doc_final_body_4': ["Bon vol !", "Good flight!", "¡Buen vuelo!"],
+  'doc_final_body_4': ["Bon vol !", "Good flight!", "¡Buen vole!"],
   'doc_close_app': [
     "Pour arrêter complètement l'application et le suivi, vous pouvez la fermer depuis le gestionnaire de tâches de votre téléphone (en la balayant vers le haut).",
     "To completely stop the application and tracking, you can close it from your phone's task manager (by swiping it up).",
@@ -397,15 +402,15 @@ const Map<String, List<String>> allTexts = {
   ],
 
   // Premium / Paywall
-  'premium_title': ["Débloquez les Archives", 'Unlock Archives', 'Desbloquear Archivos'],
+  'premium_title': ["Pack Premium", 'Premium Pack', 'Pack Premium'],
   'premium_desc': [
-    "Archiver vos traces permet de nettoyer votre liste principale sans rien perdre. Gardez vos souvenirs organisés pour toujours !",
-    "Archiving your tracks allows you to clean up your main list without losing anything. Keep your memories organized forever!",
-    "Archivar tus pistas te permite limpiar tu lista principal sin perder nada. ¡Mantén tus recuerdos organisados para siempre!"
+    "Débloquez les fonctionnalités avancées pour la navigation et l'aviation.",
+    "Unlock advanced features for navigation and aviation.",
+    "Desbloquea funciones avanzadas de navegación y aviación."
   ],
-  'premium_buy': ["Débloquer pour 1.99€", 'Unlock for 1.99€', 'Desbloquear por 1.99€'],
+  'premium_buy': ["Débloquer pour 9.99€", 'Unlock for 9.99€', 'Desbloquear por 9.99€'],
   'premium_buy_label': ["Débloquer pour", "Unlock for", "Desbloquear por"],
-  'premium_success': ["Merci ! Les archives sont débloquées.", 'Thank you! Archives are unlocked.', '¡Gracias! Los archivos están desbloqueados.'],
+  'premium_success': ["Merci ! Le Pack Premium est débloqué.", 'Thank you! Premium Pack is unlocked.', '¡Gracias! El Pack Premium está desbloqueado.'],
   'premium_reset': ["Réinitialiser achat (Test)", 'Reset purchase (Test)', 'Restablecer compra (Prueba)'],
 
   // Sorting

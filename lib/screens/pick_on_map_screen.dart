@@ -10,6 +10,7 @@ import '../models/home_service.dart';
 import '../components/routs.dart';
 import '../models/track_data.dart';
 import '../components/map_type_dialog.dart';
+import '../models/premium_state.dart';
 
 class PickOnMapScreen extends StatefulWidget {
   static const String id = 'pick_on_map';
@@ -96,6 +97,7 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
   }
 
   Future<void> _promptForHomeDetails(LatLng position) async {
+    final isPremium = context.read<PremiumState>().isPremium;
     final result = await showDialog<Home>(
       context: context,
       barrierDismissible: true,
@@ -119,32 +121,34 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
                         labelText: "${ol('name')} (${ol('namereq')})", 
                       ),
                     ),
-                    TextField(
-                      controller: vacController,
-                      decoration: InputDecoration(
-                        labelText: "URL Carte VAC",
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.paste),
-                          onPressed: () async {
-                            final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-                            if (clipboardData != null && clipboardData.text != null) {
-                              vacController.text = clipboardData.text!;
-                            }
-                          },
+                    if (isPremium)
+                      TextField(
+                        controller: vacController,
+                        decoration: InputDecoration(
+                          labelText: "URL Carte VAC",
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.paste),
+                            onPressed: () async {
+                              final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+                              if (clipboardData != null && clipboardData.text != null) {
+                                vacController.text = clipboardData.text!;
+                              }
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    CheckboxListTile(
-                      title: Text(ol('is_aerodrome')),
-                      value: isAerodrome,
-                      onChanged: (bool? value) {
-                        setDialogState(() {
-                          isAerodrome = value ?? false;
-                        });
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                    )
+                    if (isPremium)
+                      CheckboxListTile(
+                        title: Text(ol('is_aerodrome')),
+                        value: isAerodrome,
+                        onChanged: (bool? value) {
+                          setDialogState(() {
+                            isAerodrome = value ?? false;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      )
                   ],
                 ),
               ),

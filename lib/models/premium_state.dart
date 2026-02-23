@@ -25,7 +25,7 @@ class PremiumState extends ChangeNotifier {
   bool get isPremiumArchives => _isPremiumArchives || _isFullPremium;
   bool get isFullPremium => _isFullPremium;
   
-  // isPremium représente le pack complet
+  // isPremium représente le pack complet (Aviation, OACI, VAC, Préparation)
   bool get isPremium => _isFullPremium; 
 
   String get formattedPriceArchives => _priceArchives;
@@ -41,6 +41,8 @@ class PremiumState extends ChangeNotifier {
   Future<void> _init() async {
     await _loadPremiumState();
     _initializeInAppPurchase();
+    // Tenter une synchronisation silencieuse au démarrage
+    Timer(const Duration(seconds: 2), () => restorePurchases(silent: true));
   }
 
   Future<void> _loadPremiumState() async {
@@ -111,13 +113,13 @@ class PremiumState extends ChangeNotifier {
   }
 
   Future<bool> checkSecretCode(String code) async {
-    if (code == "Traceo2024") {
-      // Toggle pour le Premium Complet
+    // Si le code est TraceoArchive et que c'est déjà activé, on ne fait rien (évite le toggle accidentel)
+    // Sauf si l'utilisateur veut vraiment désactiver, mais ici on privilégie l'activation.
+    if (code == "Traceo2024" || code == "TraceoFull") {
       await _setPremiumState(_keyFull, !_isFullPremium);
       return true;
     }
-    if (code == "TraceoArchive") {
-      // Toggle pour simuler uniquement l'option Archive
+    if (code == "TraceoArchive" || code == "TraceArchive") {
       await _setPremiumState(_keyArchives, !_isPremiumArchives);
       return true;
     }
@@ -144,8 +146,12 @@ class PremiumState extends ChangeNotifier {
     }
   }
 
-  Future<void> restorePurchases() async {
-    await _inAppPurchase.restorePurchases();
+  Future<void> restorePurchases({bool silent = false}) async {
+    try {
+      await _inAppPurchase.restorePurchases();
+    } catch (e) {
+      if (!silent) debugPrint("Error restoring purchases: $e");
+    }
   }
 
   @override

@@ -321,6 +321,8 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               TextSpan(text: ol('doc_premium_oaci')),
               const TextSpan(text: "\n• "),
               TextSpan(text: ol('doc_premium_planning')),
+              const TextSpan(text: "\n• "),
+              TextSpan(text: ol('doc_premium_vac')),
 
               //---------------------------
               // --- Consumption Section ---

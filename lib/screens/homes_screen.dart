@@ -8,6 +8,7 @@ import '../models/home.dart';
 import '../models/home_service.dart';
 import '../components/routs.dart';
 import '../models/settings_state.dart';
+import '../models/premium_state.dart';
 
 class HomesScreen extends StatefulWidget {
   static const String id = 'homes_screen';
@@ -43,9 +44,45 @@ class _HomesScreenState extends State<HomesScreen> {
     return "$distanceStr $timeStr";
   }
 
+  Future<bool> _checkPremiumAccess(BuildContext context) async {
+    final premiumState = context.read<PremiumState>();
+    if (premiumState.isPremium) return true;
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(ol('premium_title')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.flight_takeoff, size: 64, color: Colors.brown),
+            const SizedBox(height: 16),
+            Text(ol('doc_premium_vac')),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(ol('cancel')),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
+            onPressed: () {
+              Navigator.pop(context, false);
+              premiumState.buyPremium();
+            },
+            child: Text(ol('premium_buy'), style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsState>();
+    final isPremium = context.watch<PremiumState>().isPremium;
     
     return Scaffold(
       appBar: AppBar(
@@ -117,7 +154,12 @@ class _HomesScreenState extends State<HomesScreen> {
                             ? Colors.green
                             : Colors.orange,
                         onPressed: () async {
-                          final scaffoldMessenger = ScaffoldMessenger.of(context);
+                           if (!isPremium) {
+                             await _checkPremiumAccess(context);
+                             return;
+                           }
+                           
+                           final scaffoldMessenger = ScaffoldMessenger.of(context);
                            if (home.vacUrl == null || home.vacUrl!.isEmpty) {
                             final newVacUrl = await _showVacDialog(context, home.vacUrl ?? "");
                             if (newVacUrl != null) {

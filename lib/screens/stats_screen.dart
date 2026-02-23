@@ -10,11 +10,69 @@ import '../components/stats_row.dart';
 import '../models/location_service.dart';
 import '../models/home_service.dart';
 import '../models/settings_state.dart';
+import '../models/premium_state.dart';
 
 class StatsScreen extends StatelessWidget {
   static const String id = '/stats';
 
   const StatsScreen({super.key});
+
+  Future<void> _checkPremiumAndLaunchVac(BuildContext context, String path) async {
+    final premiumState = context.read<PremiumState>();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    
+    if (!premiumState.isPremium) {
+       showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(ol('premium_title')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.flight_takeoff, size: 64, color: Colors.brown),
+              const SizedBox(height: 16),
+              Text(ol('doc_premium_vac')),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(ol('cancel')),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
+              onPressed: () {
+                Navigator.pop(context);
+                premiumState.buyPremium();
+              },
+              child: Text(ol('premium_buy'), style: const TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (path.startsWith('http')) {
+      final url = Uri.parse(path);
+      try {
+        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+          throw 'Could not launch $url';
+        }
+      } catch (e) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(content: Text("${ol('error_prefix')} $e")),
+        );
+      }
+    } else {
+      final result = await OpenFilex.open(path);
+      if (result.type != ResultType.done) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(content: Text("${ol('error_prefix')} ${result.message}")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +134,6 @@ class StatsScreen extends StatelessWidget {
         if (relativeAngle > 180) relativeAngle -= 360;
         if (relativeAngle < -180) relativeAngle += 360;
 
-        final scaffoldMessenger = ScaffoldMessenger.of(context);
-
         String destinationText = locaData.activeTarget?.name ?? ol('start_point');
         if (locaData.activeTarget != null && locaData.activeTarget!.isRoute && locaData.activeTarget!.routePoints != null) {
           final wpName = locaData.activeTarget!.routePoints![locaData.currentWaypointIndex]['name'];
@@ -121,28 +177,7 @@ class StatsScreen extends StatelessWidget {
                        child: IconButton(
                          icon: const Icon(Icons.description, color: Colors.green, size: 30),
                          tooltip: ol('vac_url_title'),
-                         onPressed: () async {
-                           String path = locaData.activeTarget!.vacUrl!;
-                           if (path.startsWith('http')) {
-                             final url = Uri.parse(path);
-                             try {
-                               if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                                 throw 'Could not launch $url';
-                               }
-                             } catch (e) {
-                               scaffoldMessenger.showSnackBar(
-                                 SnackBar(content: Text("${ol('error_prefix')} $e")),
-                               );
-                             }
-                           } else {
-                             final result = await OpenFilex.open(path);
-                             if (result.type != ResultType.done) {
-                               scaffoldMessenger.showSnackBar(
-                                 SnackBar(content: Text("${ol('error_prefix')} ${result.message}")),
-                               );
-                             }
-                           }
-                         },
+                         onPressed: () => _checkPremiumAndLaunchVac(context, locaData.activeTarget!.vacUrl!),
                        ),
                      ),
                   Text(
