@@ -50,6 +50,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   Timer? _simulationTimer;
   double _simulationSpeed = 1.0;
   double _currentZoom = 14.4746;
+  DateTime? _lastProcessedTime;
 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
@@ -195,11 +196,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     _simulationTimer?.cancel();
     _positionStream = null;
     _simulationTimer = null;
+    _lastProcessedTime = null;
     if (!mounted) return;
     context.read<LocaData>().reset();
     setState(() { 
-      _simulationState = SimulationState.stopped; 
-      _simulationIndex = 0; 
       _simulationState = SimulationState.stopped; 
       _simulationIndex = 0; 
       _simulationSpeed = 1.0; 
@@ -401,14 +401,34 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     _resetAllActivities();
     locaData.startTracking();
     if (activeTarget != null) { locaData.updateActiveTarget(activeTarget, _currentPosition ?? _defaultPosition); _addOrUpdateHomeMarker(activeTarget); }
-    final locationSettings = Platform.isAndroid ? AndroidSettings(accuracy: LocationAccuracy.high, distanceFilter: 0, intervalDuration: const Duration(seconds: 3), foregroundNotificationConfig: ForegroundNotificationConfig(notificationTitle: ol('foreground_notification_title'), notificationText: ol('foreground_notification_text'), enableWakeLock: true, setOngoing: true)) : const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 10);
+    final locationSettings = Platform.isAndroid
+        ? AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 0,
+        intervalDuration: const Duration(seconds:3),
+        foregroundNotificationConfig: ForegroundNotificationConfig(
+            notificationTitle: ol('foreground_notification_title'),
+            notificationText: ol('foreground_notification_text'),
+            enableWakeLock: true,
+            setOngoing: true
+        )
+    )
+        : AppleSettings( // Utiliser AppleSettings au lieu de LocationSettings
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 0,
+        showBackgroundLocationIndicator: true,    // affiche la pilule bleue (indispensable)
+        activityType: ActivityType.fitness        // Optimise pour le mouvement
+    );
     if (mounted) setState(() => _actualTitle = ol('tracking'));
     messenger.showSnackBar(SnackBar(content: Text(ol('acquiring_gps'))));
     try {
       final startPosition = await Geolocator.getCurrentPosition().timeout(const Duration(seconds: 5), onTimeout: () async => (await Geolocator.getLastKnownPosition()) ?? _defaultPosition);
       if (!mounted) return;
       await _resetMapState(null, startPosition);
-      setState(() => _currentPosition = startPosition);
+      setState(() {
+        _currentPosition = startPosition;
+        _lastProcessedTime = startPosition.timestamp;
+      });
       _positionStream = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position p) => _processNewPosition(p), onError: (e) { if(mounted) messenger.showSnackBar(SnackBar(content: Text("${ol('tracking_error')}: $e"))); _resetAllActivities(); });
     } catch (e) { if (mounted) messenger.showSnackBar(SnackBar(content: Text(ol('gps_error_start')))); _resetAllActivities(); }
   }
@@ -480,6 +500,13 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   void _stopSimulation({bool naturalEnd = false}) { if (!naturalEnd && mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('simulation_stopped')))); _resetAllActivities(); }
 
   void _processNewPosition(Position position) {
+    if (Platform.isIOS && _simulationState == SimulationState.stopped) {
+      if (_lastProcessedTime != null && position.timestamp.difference(_lastProcessedTime!).inSeconds < 3) {
+        return;
+      }
+      _lastProcessedTime = position.timestamp;
+    }
+
     final locaData = context.read<LocaData>();
     if (!locaData.updatePosition(position)) return;
     double newHeading = (locaData.trace.length > 1) ? Geolocator.bearingBetween(locaData.trace[locaData.trace.length-2].latitude, locaData.trace[locaData.trace.length-2].longitude, position.latitude, position.longitude) : position.heading;
@@ -679,13 +706,19 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     
     _updateDestinationLine();
 
+    final Set<Marker> markersToShow = settings.showPauseMarkers 
+        ? _markers 
+        : _markers.where((m) => !m.markerId.value.startsWith('pause_')).toSet();
+
     return Scaffold(
       appBar: _buildAppBar(locaData.isTracking, _simulationState != SimulationState.stopped, premiumState.isPremium),
       drawer: AppDrawer(version: _version, isTracking: locaData.isTracking, isSimulating: _simulationState == SimulationState.running, isMovingFast: locaData.speedValue > 80, activeTarget: locaData.activeTarget, onSimulate: _handleSimulate, onNamePosition: _handleNamePosition, onChangeDestination: _handleChangeDestination, onPrepareFlight: _togglePrepareFlight),
       body: Stack(children: [
         GoogleMap(
           mapType: trackData.mapType, initialCameraPosition: CameraPosition(target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude), zoom: _currentZoom), onMapCreated: (GoogleMapController c) { if (!_mapController.isCompleted) _mapController.complete(c); }, onCameraMove: (CameraPosition p) => _currentZoom = p.zoom, 
-          myLocationEnabled: false, myLocationButtonEnabled: false, zoomControlsEnabled: false, polylines: _polylines, markers: _markers, tileOverlays: tileOverlays,
+          myLocationEnabled: false, myLocationButtonEnabled: false, zoomControlsEnabled: false, polylines: _polylines, 
+          markers: markersToShow, 
+          tileOverlays: tileOverlays,
           onTap: _onMapTap, 
         ),
         if (_isLoading) Container(color: Colors.white, child: Center(child: Image.asset('assets/Promenade.png', width: 150))),

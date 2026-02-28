@@ -86,10 +86,16 @@ class AppDrawer extends StatelessWidget {
                     ),
                     const Divider(),
                     SwitchListTile(
-                      title: const Text("Ligne pointillée vers destination"),
-                      subtitle: const Text("Remplace ou complète la boussole"),
+                      title: const Text("Ligne vers destination"),
+                      subtitle: const Text("Ligne rouge pointillée"),
                       value: settings.showDestinationLine,
                       onChanged: (val) => settings.setShowDestinationLine(val),
+                    ),
+                    SwitchListTile(
+                      title: const Text("Temps d'arrêt"),
+                      subtitle: const Text("Marqueurs bleus sur la trace"),
+                      value: settings.showPauseMarkers,
+                      onChanged: (val) => settings.setShowPauseMarkers(val),
                     ),
                     if (isPremium) ...[
                       const Divider(),

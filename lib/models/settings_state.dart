@@ -9,15 +9,18 @@ enum DistanceUnit { kilometers, nauticalMiles, miles }
 class SettingsState extends ChangeNotifier {
   static const String _unitKey = 'settings_distance_unit';
   static const String _showDestinationLineKey = 'settings_show_destination_line';
+  static const String _showPauseMarkersKey = 'settings_show_pause_markers';
 
   DistanceUnit _unit = DistanceUnit.kilometers;
   bool _showDestinationLine = true;
+  bool _showPauseMarkers = true;
   
   int _oaciTileCount = 0;
   String _oaciCacheSize = "0 Ko";
 
   DistanceUnit get unit => _unit;
   bool get showDestinationLine => _showDestinationLine;
+  bool get showPauseMarkers => _showPauseMarkers;
   int get oaciTileCount => _oaciTileCount;
   String get oaciCacheSize => _oaciCacheSize;
 
@@ -35,6 +38,7 @@ class SettingsState extends ChangeNotifier {
       _unit = DistanceUnit.kilometers;
     }
     _showDestinationLine = prefs.getBool(_showDestinationLineKey) ?? true;
+    _showPauseMarkers = prefs.getBool(_showPauseMarkersKey) ?? true;
     notifyListeners();
   }
 
@@ -93,6 +97,13 @@ class SettingsState extends ChangeNotifier {
     _showDestinationLine = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_showDestinationLineKey, value);
+    notifyListeners();
+  }
+
+  Future<void> setShowPauseMarkers(bool value) async {
+    _showPauseMarkers = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_showPauseMarkersKey, value);
     notifyListeners();
   }
 

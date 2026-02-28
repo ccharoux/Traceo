@@ -12,6 +12,7 @@ import 'package:file_picker/file_picker.dart';
 
 import '../components/map_type_dialog.dart';
 import '../models/track_data.dart';
+import '../models/settings_state.dart';
 import '../components/routs.dart';
 
 class MapTrack extends StatefulWidget {
@@ -320,7 +321,7 @@ class _MapTrackState extends State<MapTrack> {
     );
   }
 
-  Future<Map<String, dynamic>> _loadTracksData(TrackData trackData) async {
+  Future<Map<String, dynamic>> _loadTracksData(TrackData trackData, SettingsState settings) async {
     _colorIndex = 0;
     final trackNames = trackData.tracksToDisplay;
     Set<Polyline> polylines = {};
@@ -367,7 +368,7 @@ class _MapTrackState extends State<MapTrack> {
                 icon: (vignette != null) ? (_photoIcon ?? BitmapDescriptor.defaultMarker) : (_noteIcon ?? BitmapDescriptor.defaultMarker),
                 onTap: () => _showNoteEditDialog(trackName, i, finalNote, pauseDuration: finalPause, vignetteBase64: finalVignette),
               ));
-            } else if (pause != null && pause >= 60) {
+            } else if (settings.showPauseMarkers && pause != null && pause >= 60) {
               markers.add(Marker(
                 markerId: MarkerId('pause_${i}_$trackName'),
                 position: latLng,
@@ -393,8 +394,9 @@ class _MapTrackState extends State<MapTrack> {
   @override
   Widget build(BuildContext context) {
     final trackData = context.read<TrackData>();
+    final settings = context.watch<SettingsState>();
     return FutureBuilder<Map<String, dynamic>>(
-      future: _loadTracksData(trackData),
+      future: _loadTracksData(trackData, settings),
       builder: (context, snapshot) {
         if (!snapshot.hasData || !_iconsLoaded) return _buildLoadingScaffold();
         final data = snapshot.data!;

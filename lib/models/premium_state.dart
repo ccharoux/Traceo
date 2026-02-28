@@ -113,14 +113,13 @@ class PremiumState extends ChangeNotifier {
   }
 
   Future<bool> checkSecretCode(String code) async {
-    // Si le code est TraceoArchive et que c'est déjà activé, on ne fait rien (évite le toggle accidentel)
-    // Sauf si l'utilisateur veut vraiment désactiver, mais ici on privilégie l'activation.
+    // Désormais les codes ACTIVENT toujours (pas de bascule Off) pour éviter les erreurs de manipulation
     if (code == "Traceo2024" || code == "TraceoFull") {
-      await _setPremiumState(_keyFull, !_isFullPremium);
+      await _setPremiumState(_keyFull, true);
       return true;
     }
     if (code == "TraceoArchive" || code == "TraceArchive") {
-      await _setPremiumState(_keyArchives, !_isPremiumArchives);
+      await _setPremiumState(_keyArchives, true);
       return true;
     }
     return false;
