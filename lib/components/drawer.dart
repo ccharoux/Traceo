@@ -58,16 +58,16 @@ class AppDrawer extends StatelessWidget {
         return Consumer<SettingsState>(
           builder: (context, settings, child) {
             return AlertDialog(
-              title: const Text("Paramètres"),
+              title: Text(ol('parameters')),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const ListTile(
-                      title: Text("Unités de mesure", style: TextStyle(fontWeight: FontWeight.bold)),
+                    ListTile(
+                      title: Text(ol('measurements'), style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
                     ListTile(
-                      title: const Text("Kilomètres (km, km/h, m)"),
+                      title: Text(ol('km_unit')),
                       leading: Radio<DistanceUnit>(
                         value: DistanceUnit.kilometers,
                         groupValue: settings.unit,
@@ -76,7 +76,7 @@ class AppDrawer extends StatelessWidget {
                       onTap: () => settings.setUnit(DistanceUnit.kilometers),
                     ),
                     ListTile(
-                      title: const Text("Milles Nautiques (NM, kt, ft)"),
+                      title: Text(ol('nm_unit')),
                       leading: Radio<DistanceUnit>(
                         value: DistanceUnit.nauticalMiles,
                         groupValue: settings.unit,
@@ -86,32 +86,32 @@ class AppDrawer extends StatelessWidget {
                     ),
                     const Divider(),
                     SwitchListTile(
-                      title: const Text("Ligne vers destination"),
-                      subtitle: const Text("Ligne rouge pointillée"),
+                      title: Text(ol('destination_line')),
+                      subtitle: Text(ol('destination_line_sub')),
                       value: settings.showDestinationLine,
                       onChanged: (val) => settings.setShowDestinationLine(val),
                     ),
                     SwitchListTile(
-                      title: const Text("Temps d'arrêt"),
-                      subtitle: const Text("Marqueurs bleus sur la trace"),
+                      title: Text(ol('stop_time')),
+                      subtitle: Text(ol('stop_time_sub')),
                       value: settings.showPauseMarkers,
                       onChanged: (val) => settings.setShowPauseMarkers(val),
                     ),
                     if (isPremium) ...[
                       const Divider(),
-                      const ListTile(
-                        title: Text("Cache Cartes OACI", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ListTile(
+                        title: Text(ol('oaci_cache_title'), style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       ListTile(
-                        title: Text("${settings.oaciTileCount} tuiles stockées"),
-                        subtitle: Text("Espace occupé : ${settings.oaciCacheSize}"),
+                        title: Text(ol('tiles_stored').replaceAll('%s', settings.oaciTileCount.toString())),
+                        subtitle: Text(ol('space_occupied').replaceAll('%s', settings.oaciCacheSize)),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete_sweep, color: Colors.red),
                           onPressed: () async {
                             await settings.clearOaciCache();
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Cache OACI vidé"), duration: Duration(seconds: 1)),
+                                SnackBar(content: Text(ol('cache_cleared_msg')), duration: const Duration(seconds: 1)),
                               );
                             }
                           },
@@ -124,7 +124,7 @@ class AppDrawer extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Fermer"),
+                  child: Text(ol('close')),
                 ),
               ],
             );
@@ -280,7 +280,7 @@ class AppDrawer extends StatelessWidget {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.settings),
-                  title: const Text("Paramètres"),
+                  title: Text(ol('parameters')),
                   onTap: () {
                     Navigator.pop(context);
                     _showSettingsDialog(context);

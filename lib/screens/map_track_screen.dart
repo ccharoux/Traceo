@@ -211,7 +211,7 @@ class _MapTrackState extends State<MapTrack> {
                   child: Text(ol('delete'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                 ),
                 const Spacer(),
-                if (pauseDuration != null && pauseDuration >= 60)
+                if (pauseDuration != null && pauseDuration >= 600)
                   Padding(
                     padding: const EdgeInsets.only(right: 10.0),
                     child: Text(affTime(pauseDuration.toString(), true), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 14)),
@@ -368,7 +368,7 @@ class _MapTrackState extends State<MapTrack> {
                 icon: (vignette != null) ? (_photoIcon ?? BitmapDescriptor.defaultMarker) : (_noteIcon ?? BitmapDescriptor.defaultMarker),
                 onTap: () => _showNoteEditDialog(trackName, i, finalNote, pauseDuration: finalPause, vignetteBase64: finalVignette),
               ));
-            } else if (settings.showPauseMarkers && pause != null && pause >= 60) {
+            } else if (settings.showPauseMarkers && pause != null && pause >= 600) { // Changé à 600 (10 min)
               markers.add(Marker(
                 markerId: MarkerId('pause_${i}_$trackName'),
                 position: latLng,

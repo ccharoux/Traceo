@@ -60,7 +60,11 @@ Map<int, String> languages = {
 };
 
 Future<String> formatTrackName(DateTime time) async {
-  var dateFormat = DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR');
+  String locale = 'en_US';
+  if (olp == 0) locale = 'fr_FR';
+  if (olp == 2) locale = 'es_ES';
+  
+  var dateFormat = DateFormat("d MMMM yyyy HH'h'mm", locale);
   return dateFormat.format(time);
 }
 
@@ -120,7 +124,7 @@ const Map<String, List<String>> allTexts = {
   'doc_intro_3': [".", ".", "."],
 
   'doc_bottom_bar_title': ["Barre d'informations", "Information bar", "Barra de información"],
-  'doc_bottom_bar_body': ["Pendant le suivi, une barre d'informations s'affiche en bas de l'écran. Elle vous donne des informations utiles comme la distance parcourue et la vitesse actuelle. Deux boutons sont également disponibles :", "During tracking, an information bar is displayed at the bottom of the screen. It gives you useful information such as distance traveled and current speed. Two buttons are also available:", "Durante le seguimiento, se muestra una barra de información en la parte inferior de la pantalla. Le proporciona información utile comme la distancia recorrida y la vitesse actual. También hay dos botones disponibles:"],
+  'doc_bottom_bar_body': ["Pendant le suivi, une barre d'informations s'affiche en bas de l'écran. Elle vous donne des informations utiles comme la distance parcourue et la vitesse actuelle. Deux boutons sont également disponibles :", "During tracking, an information bar is displayed at the bottom of the screen. Elle vous donne des informations utiles comme la distance parcourue et la vitesse actuelle. Deux boutons sont également disponibles :", "Durante le seguimiento, se muestra una barra de información en la parte inferior de la pantalla. Le proporciona información utile comme la distancia recorrida y la vitesse actual. También hay dos botones disponibles:"],
   'doc_bottom_bar_compass': [" pour afficher le cap à suivre pour rejoindre votre destination.", " to display the heading to follow to reach your destination.", " para mostrar le rumbo a suivre pour rejoindre votre destination."],
   'doc_bottom_bar_stats': [" pour afficher des statistiques détaillées sur votre parcours.", " to display detailed statistics about your track.", " para mostrar estadísticas detalladas de su recorrido."],
   'doc_bottom_bar_pause': [" pour mettre en pause le suivi.", " to pause tracking.", " para pausar le seguimiento."],
@@ -160,7 +164,7 @@ const Map<String, List<String>> allTexts = {
     "Durante le paseo, es posible anotar sus impresiones haciendo clic en le bouton "],
   'doc_photos_intro':["On peut aussi prendre des photos avec le bouton ",
     "You can also take photos with the button ",
-    "También puede tomar photos con el botón ","",""],
+    "También peut tomar photos con el botón ","",""],
   'doc_notes_display':["Les notes sont signalées à l'affichage de la trace par un marqueur orange et les photos par un marqueur violet.",
     "Notes are indicated on the track display by an orange marker and the photos marked with a purple marker.",
     "Las notas se indican en la pantalla de la pista mediante un marcador naranja y las fotos marcadas con un marcador morado."],
@@ -190,7 +194,7 @@ const Map<String, List<String>> allTexts = {
     " le muestra un mapa. En le área de búsqueda, ingrese una dirección, y al presionar Enter, la aplicación solicita un nombre. Al presionar OK, las coordenadas de la dirección serán guardadas por la aplicación."],
   'doc_dest_name_pos': ["Nommer votre position actuelle (", "Name your current position (", "Nombrar su posición actual ("],
   'doc_dest_manage': [") ou gérer vos destinations existantes (", ") or manage your existing destinations (", ") o gestionar sus destinos existentes ("],
-  'doc_dest_change': ["). Vous pouvez également changer de destination à tout moment (", "). You can also change your destination at any time (", "). también puede cambiar su destino en cualquier momento ("],
+  'doc_dest_change': ["). Vous pouvez également changer de destination à tout moment (", "). You can also change your destination at any time (", "). también peut cambiar su destino en cualquier momento ("],
   'doc_dest_gmaps': ["), obtenir un itinéraire Google Maps vers votre destination (", "), get a Google Maps route to your destination (", "), obtener una ruta de Google Maps a su destino ("],
   'doc_dest_export': ["), exporter vos destinations (", "), export your destinations (", "), exportar sus destinos ("],
   'doc_dest_import': [") ou importer des destinations partagées (", ") or import shared destinations (", ") o importar destinos compartidos ("],
@@ -200,7 +204,7 @@ const Map<String, List<String>> allTexts = {
   'doc_vac_title': ["Cartes VAC et aérodromes", "VAC maps and aerodromes", "Mapas VAC y aeródromos"],
   'doc_vac_body_1': ["L'application permet de gérer des destinations qui peuvent être des aérodromes. Avec le Pack Premium, vous pourrez associer et afficher les cartes VAC correspondantes.",
     "The application allows you to manage destinations that can be aerodromes. With the Premium Pack, you will be able to associate and display the corresponding VAC maps.",
-    "La aplicación le permite gestionar destinos que pueden ser aeródromos. Con el Pack Premium, podrá asociar y visualizar los mapas VAC correspondientes."],
+    "La aplicación le permite gestionar destinos que pueden ser aeródromos. Con le Pack Premium, podrá asociar y visualizar los mapas VAC correspondientes."],
   'doc_vac_body_2':
   ["Les cartes VAC sont des cartes d'approche à vue qui fournissent des informations essentielles aux pilotes. Une icône (",
     "VAC maps are visual approach charts that provide essential information to pilots. An icon (",
@@ -222,25 +226,37 @@ const Map<String, List<String>> allTexts = {
   'doc_settings_intro': [
     "Accessibles via l'icône roue dentée dans le menu, les paramètres vous permettent de personnaliser votre expérience.",
     "Accessible via the gear icon in the menu, settings allow you to customize your experience.",
-    "Accesibles a través del icono de engranaje en el menú, los ajustes le permiten personalizar su experiencia."
+    "Accesibles a través del icono de engranaje en le menú, los ajustes le permiten personalizar su experiencia."
   ],
   'doc_settings_units': [
     "Unités de mesure : Basculez entre le système métrique (Kilomètres/Mètres) et le système nautique (Milles Nautiques/Nœuds/Pieds) pour l'aviation.",
     "Measurement units: Switch between the metric system (Kilometers/Meters) and the nautical system (Nautical Miles/Knots/Feet) for aviation.",
-    "Unidades de medida: cambie entre el sistema métrico (Kilómetros/Metros) y el sistema náutico (Millas náuticas/Nudos/Pies) para aviación."
+    "Unidades de medida: cambie entre le sistema métrico (Kilómetros/Metros) y le sistema náutico (Millas náuticas/Nudos/Pies) para aviación."
   ],
   'doc_settings_destline': [
     "Ligne de mire : Activez la ligne rouge pointillée pour visualiser en permanence la trajectoire directe vers votre objectif sur la carte.",
     "Bearing line: Enable the red dotted line to constantly visualize the direct trajectory to your objective on the map.",
-    "Línea de rumbo: active la línea punteada roja para visualizar permanentemente la trayectoria directa a su objetivo en el mapa."
+    "Línea de rumbo: active la línea punteada roja para visualizar permanentemente la trayectoria directa a su objetivo en le mapa."
   ],
+  'parameters':["Paramètres",'Parameters','Parámetros'],
+  'measurements':["Unités de mesures","Units of Measurement","Unidades de medida"],
+  'km_unit': ["Kilomètres (km, km/h, m)", "Kilometers (km, km/h, m)", "Kilómetros (km, km/h, m)"],
+  'nm_unit': ["Milles Nautiques (NM, kt, ft)", "Nautical Miles (NM, kt, ft)", "Millas náuticas (NM, kt, ft)"],
+  'destination_line': ["Ligne vers destination", "Line to destination", "Línea al destino"],
+  'destination_line_sub': ["Ligne rouge pointillée", "Red dotted line", "Línea de puntos roja"],
+  'stop_time': ["Temps d'arrêt", "Stop time", "Tiempo de parada"],
+  'stop_time_sub': ["Marqueurs bleus sur la trace", "Blue markers on the track", "Marcadores azules en la pista"],
+  'oaci_cache_title': ["Cache Cartes OACI", "OACI Map Cache", "Caché de mapas OACI"],
+  'tiles_stored': ["%s tuiles stockées", "%s tiles stored", "%s mosaicos almacenados"],
+  'space_occupied': ["Espace occupé : %s", "Space occupied: %s", "Espacio ocupado: %s"],
+  'cache_cleared_msg': ["Cache OACI vidé", "OACI cache cleared", "Caché OACI vaciado"],
 
   // Pack Premium
   'doc_premium_title': ["Pack Premium : Navigation & Aviation", "Premium Pack: Navigation & Aviation", "Pack Premium: Navegación y Aviación"],
   'doc_premium_intro': [
     "Le Pack Premium débloque des outils avancés pour la précision et la sécurité, que ce soit au sol ou en vol.",
     "The Premium Pack unlocks advanced tools for precision and safety, whether on the ground or in the air.",
-    "El Pack Premium desbloquea herramientas avanzadas para la precisión y la seguridad, ya sea en tierra o en el aire."
+    "El Pack Premium desbloquea herramientas avanzadas para la précision y la seguridad, ya sea en tierra o en el aire."
   ],
   'doc_premium_oaci': [
     "Cartographie OACI : Accédez aux cartes aéronautiques dynamiques. Grâce au cache, vos cartes restent consultables même sans réseau (mode hors-ligne).",
@@ -259,7 +275,7 @@ const Map<String, List<String>> allTexts = {
   ],
 
   'doc_final_title': ["Consommation et batterie", "Consumption and battery", "Consumo y batería"],
-  'doc_final_body_1': ["L'application est conçue pour être économe en énergie. Cependant, l'utilisation continue du GPS peut diminuer la durée de vie de la batterie.", "The application is designed to be energy efficient. However, continuous use of GPS can decrease battery life.", "La aplicación está diseñada para ser eficiente en le consumo de energía. Sin embargo, le uso continuo del GPS puede disminuir la duración de la batterie."],
+  'doc_final_body_1': ["L'application est conçue pour être économe en énergie. Cependant, l'utilisation continue du GPS peut diminuer la durée de vie de la batterie.", "The application is designed to be energy efficient. However, continuous use of GPS can decrease battery life.", "La aplicación está diseñada para ser eficiente en le consumo de energía. Sin embargo, le uso continuo del GPS peut diminuer la duración de la batterie."],
   'doc_final_body_2': ["Assurez-vous de désactiver le suivi lorsque vous ne l'utilisez pas pour préserver la batterie.", "Be sure to turn off tracking when not in use to conserve battery.", "Asegúrese de desactivar le seguimiento cuando no lo esté utilizando para conservar la batería."],
   'doc_final_body_3': ["Le suivi GPS fonctionne grâce à une notification permanente. Vous pouvez éteindre votre écran ou utiliser d'autres applications, le tracé continuera normalement.", "GPS tracking works thanks to a permanent notification. You can turn off your screen or use other apps, the track will continue normally.", "El seguimiento GPS funciona gracias a una notification permanente. Puede apagar su pantalla o utilizar otras aplicaciones, la traza continuará normalement."],
   'doc_final_body_4': ["Bon vol !", "Good flight!", "¡Buen vole!"],
@@ -323,7 +339,7 @@ const Map<String, List<String>> allTexts = {
 // Tracks Screen
   'tracks_title': ["Liste des traces", 'Tracks list', 'Lista de pistas'],
   'view_tracks': ["Voir les traces", "View tracks", "Ver pistas"],
-  'selected_tracks': ["traces sélectionnées", 'selected tracks', 'pistas sélectionnées'],
+  'selected_tracks': ["traces sélectionnées", 'selected tracks', 'pistas seleccionnées'],
   'delete_prompt_title': [
     "Supprimer les traces sélectionnées ?",
     'Delete selected tracks?',
@@ -398,7 +414,7 @@ const Map<String, List<String>> allTexts = {
   'export_size_warning': [
     "Attention: le fichier est volumineux (%s Mo) et pourrait dépasser la limite de certains envois par mail.",
     "Warning: the file is large (%s MB) and might exceed the limit for some email providers.",
-    "Atención: el archivo es grande (%s MB) et podría superar el límite de algunos proveedores de correo electrónico."
+    "Atención: el archivo es grande (%s MB) et podría superar le límite de algunos proveedores de correo electrónico."
   ],
 
   // Premium / Paywall
@@ -460,7 +476,7 @@ const Map<String, List<String>> allTexts = {
   'background_location_rationale_message': [
     "Pour enregistrer votre trace en arrière-plan (écran éteint), vous devez régler l'autorisation sur \"Pendant l'utilisation\".\n\nSur l'écran suivant :\n1. Cliquez sur 'Autorisations'\n2. Cliquez sur 'Position'\n3. Sélectionnez 'Autoriser seulement si l'appli est en cours d'utilisation'",
     "To record your track in the background (screen off), you must set the permission to \"While using the app\".\n\nOn the next screen:\n1. Click on 'Permissions'\n2. Click on 'Location'\n3. Select 'Allow only while using the app'",
-    "Para registrar su pista en segundo plano (pantalla apagada), debe configurar el permiso en \"Durante le uso\".\n\nEn la siguiente pantalla:\n1. Haga clic en 'Permisos'\n2. Haga clic en 'Ubicación'\n3. Seleccione 'Permitir solo durante el uso de la aplicación'"
+    "Para registrar su pista en segundo plano (pantalla apagada), debe configurar el permiso en \"Durante le uso\".\n\nEn la siguiente pantalla:\n1. Haga clic en 'Permisos'\n2. Haga clic en 'Ubicación'\n3. Seleccione 'Permitir solo durante le uso de la aplicación'"
   ],
   'permissions_required': ["Permissions requises", "Permissions required", "Permisos requeridos"],
   'restart_tracking_after_permission': [
@@ -575,4 +591,21 @@ const Map<String, List<String>> allTexts = {
     "Route '%s' saved in destinations!",
     "¡Ruta '%s' guardada en los destinos!"
   ],
+  'nav_point': ["Point de navigation", "Navigation point", "Punto de navegación"],
+  'name_this_point': ["Nommez ce point", "Name this point", "Nombra este punto"],
+  'departure_point': ["Départ", "Departure", "Salida"],
+  'delete_point_q': ["Supprimer ce point ?", "Delete this point?", "¿Eliminar este punto?"],
+  'remove_point_from_route': ["Voulez-vous retirer '%s' de votre itinéraire ?", "Do you want to remove '%s' from your route?", "¿Quieres eliminar '%s' de tu ruta?"],
+  'route_note': ["Note de route", "Route note", "Nota de ruta"],
+  'enter_segment_note': ["Entrez une note pour ce segment (ex: monter à 4000ft)", "Enter a note for this segment (e.g. climb to 4000ft)", "Introduzca una nota para este segmento (ej. subir a 4000 pies)"],
+  'edit_point': ["Éditer le point", "Edit point", "Editar punto"],
+  'segment_note': ["Note de segment", "Segment note", "Nota de segmento"],
+  'press_to_close': ["Appuyez pour fermer", "Tap to close", "Toca para cerrar"],
+  'undo_last_change': ["Annuler la dernière modification", "Undo last change", "Deshacer último cambio"],
+  'show_compass_tooltip': ["Afficher le cap", "Show compass", "Mostrar rumbo"],
+  'wp_reached': ["Point atteint :", "Waypoint reached:", "Punto alcanzado:"],
+  'heading_to': ["Cap vers", "Heading to", "Rumbo a"],
+  'unit_mb': ["Mo", "MB", "MB"],
+  'tap_segment_to_add_note': ["Tapez sur un segment de la route pour ajouter une note", "Tap on a route segment to add a note", "Toca un segmento de la ruta para añadir una nota"],
+  'add_route_note': ["Ajouter une note de route", "Add route note", "Añadir nota de ruta"],
 };

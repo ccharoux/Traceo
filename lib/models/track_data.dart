@@ -163,7 +163,20 @@ class TrackData with ChangeNotifier {
   Future<void> writeTrack(String trackName, String content) async {
     final file = File(p.join(trackPath, '$trackName.txt'));
     await file.writeAsString(content);
-    await listTracks();
+    
+    // Optimisation : au lieu de relire TOUTES les traces, on met à jour uniquement celle-ci
+    final lines = content.split('\n');
+    if (lines.length >= 7) {
+      final newTrack = Track.fromLines(lines);
+      final index = _tracks.indexWhere((t) => t.name == trackName);
+      if (index != -1) {
+        _tracks[index] = newTrack;
+      } else {
+        _tracks.add(newTrack);
+      }
+      sortTracks();
+      notifyListeners();
+    }
   }
 
   void writeTrackSync(String trackName, String content) {

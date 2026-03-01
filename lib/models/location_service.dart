@@ -76,6 +76,13 @@ class LocaData with ChangeNotifier {
     _activeTarget = newTarget;
     _currentWaypointIndex = (newTarget.isRoute && (newTarget.routePoints?.length ?? 0) > 1) ? 1 : 0;
     nextHeadingMessage = null;
+    
+    // Charger les notes et photos si elles existent dans le Home
+    notes.clear();
+    if (newTarget.notes != null) notes.addAll(newTarget.notes!);
+    photos.clear();
+    if (newTarget.photos != null) photos.addAll(newTarget.photos!);
+
     recalculateTargetMetrics(currentPosition);
     notifyListeners();
   }
@@ -118,7 +125,7 @@ class LocaData with ChangeNotifier {
     if (isMoving) { 
       if (_pauseStartTime != null) {
         final pauseDuration = newPosition.timestamp.difference(_pauseStartTime!).inSeconds;
-        if (pauseDuration >= 60) {
+        if (pauseDuration >= 600) { // Marqueur bleu seulement après 10 minutes d'arrêt
           final String pauseKey = _noteInCurrentPauseKey ?? _getPosKey(lastPosition.timestamp);
           pauses[pauseKey] = pauseDuration;
         }
@@ -172,7 +179,7 @@ class LocaData with ChangeNotifier {
       );
       if (nextBearing < 0) nextBearing += 360;
       
-      nextHeadingMessage = "Point atteint: ${targetWP['name']}\nCap vers ${nextWP['name']}: ${nextBearing.toStringAsFixed(0)}°";
+      nextHeadingMessage = "${ol('wp_reached')} ${targetWP['name']}\n${ol('heading_to')} ${nextWP['name']}: ${nextBearing.toStringAsFixed(0)}°";
       notifyListeners();
     }
   }
