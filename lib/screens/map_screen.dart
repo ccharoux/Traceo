@@ -29,7 +29,7 @@ import '../models/home.dart';
 import '../models/home_service.dart';
 import '../models/premium_state.dart';
 import '../models/settings_state.dart';
-import '../screens/homes_screen.dart';
+import '../components/heading_indicator.dart';
 
 // OPENAIP key
 const String _openAipApiKey = 'f8a70b741f6eee3412c75e23e4121ca1';
@@ -88,6 +88,10 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   // Fournisseur de tuiles avec cache robuste
   late final _OpenAIPTileProvider _oaciTileProvider;
 
+  // État de la boussole temporaire
+  bool _showCompassTemp = false;
+  Timer? _compassTimer;
+
   final Position _defaultPosition = Position(
     latitude: 43.805072, longitude: 5.725026, timestamp: DateTime.now(),
     accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0,
@@ -134,6 +138,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     _positionStream?.cancel();
     _simulationTimer?.cancel();
+    _compassTimer?.cancel();
     super.dispose();
   }
 
@@ -254,6 +259,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       builder: (BuildContext dialogContext) {
         return ChooseHomeDialog(
           homes: homeService.homes,
+          title: ol('flight_preparation'),
+          subtitle: ol('choose_destination'),
+          onlyAerodromes: true,
           onDelete: (Home home) async {
             final n = Navigator.of(dialogContext);
             await homeService.deleteHome(home.name);
@@ -265,11 +273,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
 
     if (chosen == null || !mounted) return;
-
-    if (!chosen.isAerodrome) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('choose_aerodrome_for_prep'))));
-      return;
-    }
 
     locaData.updateActiveTarget(chosen, _currentPosition ?? _defaultPosition);
     _addOrUpdateHomeMarker(chosen);
@@ -534,8 +537,15 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       if (parts.length >= 4) {
         final lat = double.tryParse(parts[0]), lon = double.tryParse(parts[1]), alt = double.tryParse(parts[2]), time = DateTime.tryParse(parts[3]);
         if (lat != null && lon != null && alt != null && time != null) {
+          double speed = 0;
+          if (simulatedPositions.isNotEmpty) {
+            final last = simulatedPositions.last;
+            final dist = Geolocator.distanceBetween(last.latitude, last.longitude, lat, lon);
+            final diff = time.difference(last.timestamp).inSeconds;
+            if (diff > 0) speed = dist / diff;
+          }
           final String key = time.toLocal().toIso8601String().split('.')[0];
-          simulatedPositions.add(Position(latitude: lat, longitude: lon, altitude: alt, timestamp: time, accuracy: 1, altitudeAccuracy: 1, heading: 0, headingAccuracy: 1, speed: 5, speedAccuracy: 1));
+          simulatedPositions.add(Position(latitude: lat, longitude: lon, altitude: alt, timestamp: time, accuracy: 1, altitudeAccuracy: 1, heading: 0, headingAccuracy: 1, speed: speed, speedAccuracy: 1));
           String? noteContent, photoVignette; int? pauseDuration;
           for (var part in parts.sublist(4)) { if (part.startsWith("pause:")) { pauseDuration = int.tryParse(part.substring(6)); } else if (part.startsWith("vignette:")) { photoVignette = part.substring(9); } else { noteContent = (noteContent == null) ? Uri.decodeComponent(part) : "$noteContent ${Uri.decodeComponent(part)}"; } }
           if (pauseDuration != null) locaData.pauses[key] = pauseDuration;
@@ -596,7 +606,13 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     if (settings.showDestinationLine && locaData.activeTarget != null && _currentPosition != null && (locaData.isTracking || _simulationState != SimulationState.stopped)) {
       double targetLat = locaData.activeTarget!.latitude, targetLon = locaData.activeTarget!.longitude;
       if (locaData.activeTarget!.isRoute && locaData.activeTarget!.routePoints != null && locaData.currentWaypointIndex < locaData.activeTarget!.routePoints!.length) { targetLat = locaData.activeTarget!.routePoints![locaData.currentWaypointIndex]['lat']; targetLon = locaData.activeTarget!.routePoints![locaData.currentWaypointIndex]['lon']; }
-      _polylines.add(Polyline(polylineId: const PolylineId('to_destination'), points: [LatLng(_currentPosition!.latitude, _currentPosition!.longitude), LatLng(targetLat, targetLon)], color: Colors.red.withValues(alpha: 0.6), width: 3, patterns: [PatternItem.dash(15), PatternItem.gap(10)]));
+      _polylines.add(Polyline(
+        polylineId: const PolylineId('to_destination'), 
+        points: [LatLng(_currentPosition!.latitude, _currentPosition!.longitude), LatLng(targetLat, targetLon)], 
+        color: Colors.red.withValues(alpha: 0.9), 
+        width: 2, 
+        patterns: [PatternItem.dash(20), PatternItem.gap(10)]
+      ));
     }
   }
 
@@ -633,10 +649,30 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     final Set<TileOverlay> tileOverlays = {}; if (canShowOACI) tileOverlays.add(TileOverlay(tileOverlayId: const TileOverlayId('aviation_layer_stable'), tileProvider: _oaciTileProvider, zIndex: 1));
     _updateDestinationLine();
     final Set<Marker> markersToShow = settings.showPauseMarkers ? _markers : _markers.where((m) => !m.markerId.value.startsWith('pause_')).toSet();
+
+    double targetBearing = 0.0;
+    if (locaData.activeTarget != null && _currentPosition != null) {
+      double tLat = locaData.activeTarget!.latitude;
+      double tLon = locaData.activeTarget!.longitude;
+      if (locaData.activeTarget!.isRoute && locaData.activeTarget!.routePoints != null && locaData.currentWaypointIndex < locaData.activeTarget!.routePoints!.length) {
+        tLat = locaData.activeTarget!.routePoints![locaData.currentWaypointIndex]['lat'];
+        tLon = locaData.activeTarget!.routePoints![locaData.currentWaypointIndex]['lon'];
+      }
+      targetBearing = Geolocator.bearingBetween(_currentPosition!.latitude, _currentPosition!.longitude, tLat, tLon);
+      if (targetBearing < 0) targetBearing += 360;
+    }
+
     return Scaffold(
       appBar: _buildAppBar(locaData.isTracking, _simulationState != SimulationState.stopped, premiumState.isPremium),
       drawer: AppDrawer(version: _version, isTracking: locaData.isTracking, isSimulating: _simulationState == SimulationState.running, isMovingFast: locaData.speedValue > 80, activeTarget: locaData.activeTarget, onSimulate: _handleSimulate, onNamePosition: _handleNamePosition, onChangeDestination: _handleChangeDestination, onPrepareFlight: _togglePrepareFlight),
-      body: Stack(children: [ GoogleMap( mapType: trackData.mapType, initialCameraPosition: CameraPosition(target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude), zoom: _currentZoom), onMapCreated: (GoogleMapController c) { if (!_mapController.isCompleted) _mapController.complete(c); }, onCameraMove: (CameraPosition p) => _currentZoom = p.zoom, myLocationEnabled: false, myLocationButtonEnabled: false, zoomControlsEnabled: false, polylines: _polylines, markers: markersToShow, tileOverlays: tileOverlays, onTap: _onMapTap, ), if (_isLoading) Container(color: Colors.white, child: Center(child: Image.asset('assets/Promenade.png', width: 150))), MapControls(onZoomIn: () async => (await _mapController.future).animateCamera(CameraUpdate.zoomIn()), onZoomOut: () async => (await _mapController.future).animateCamera(CameraUpdate.zoomOut()), onMyLocation: () => _currentPosition != null ? _animateCameraToPosition(_currentPosition!) : null, onToggleMapView: () { setState(() { _isTopDownView = !_isTopDownView; if (_isTopDownView) _currentZoom = 16.0; }); if (_currentPosition != null) _animateCameraToPosition(_currentPosition!); }, isTopDownView: _isTopDownView, isTracking: locaData.isTracking || _simulationState != SimulationState.stopped), if (locaData.nextHeadingMessage != null) _buildNextHeadingBubble(locaData), ]),
+      body: Stack(children: [ 
+        GoogleMap( mapType: trackData.mapType, initialCameraPosition: CameraPosition(target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude), zoom: _currentZoom), onMapCreated: (GoogleMapController c) { if (!_mapController.isCompleted) _mapController.complete(c); }, onCameraMove: (CameraPosition p) => _currentZoom = p.zoom, myLocationEnabled: false, myLocationButtonEnabled: false, zoomControlsEnabled: false, polylines: _polylines, markers: markersToShow, tileOverlays: tileOverlays, onTap: _onMapTap, ), 
+        if (_isLoading) Container(color: Colors.white, child: Center(child: Image.asset('assets/Promenade.png', width: 150))), 
+        MapControls(onZoomIn: () async => (await _mapController.future).animateCamera(CameraUpdate.zoomIn()), onZoomOut: () async => (await _mapController.future).animateCamera(CameraUpdate.zoomOut()), onMyLocation: () => _currentPosition != null ? _animateCameraToPosition(_currentPosition!) : null, onToggleMapView: () { setState(() { _isTopDownView = !_isTopDownView; if (_isTopDownView) _currentZoom = 16.0; }); if (_currentPosition != null) _animateCameraToPosition(_currentPosition!); }, isTopDownView: _isTopDownView, isTracking: locaData.isTracking || _simulationState != SimulationState.stopped),
+        if (_showCompassTemp && locaData.activeTarget != null && (locaData.isTracking || _simulationState != SimulationState.stopped)) 
+          HeadingIndicator(bearingToTarget: targetBearing, currentHeading: _currentPosition?.heading ?? 0),
+        if (locaData.nextHeadingMessage != null) _buildNextHeadingBubble(locaData), 
+      ]),
       floatingActionButton: _isLoading ? null : FloatingActionButton(onPressed: _isSaving ? null : () async { if (_isPreparingFlight) { await _saveFlightPlan(); } else if (locaData.isTracking) { await _stopTracking(); } else if (_simulationState != SimulationState.stopped) { _stopSimulation(); } else { await _startTracking(); } }, backgroundColor: _isPreparingFlight ? Colors.blue : (locaData.isTracking ? Colors.red : (_simulationState != SimulationState.stopped) ? Colors.orange : Colors.green), child: _isSaving ? const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)) : Icon(_isPreparingFlight ? Icons.save : (locaData.isTracking || _simulationState != SimulationState.stopped ? Icons.stop : Icons.play_arrow), color: Colors.white)),
       bottomNavigationBar: BottomAppBar(child: Container(height: 50.0, padding: const EdgeInsets.symmetric(horizontal: 16.0), alignment: Alignment.center, child: Consumer<LocaData>(builder: (context, ld, child) { if (ld.isTracking) return _buildTrackingBanner(ld, settings); if (_simulationState != SimulationState.stopped) return _buildSimulationBanner(ld, settings); return _isPreparingFlight ? _buildPreparationBanner() : Text(ol('start_tracking_prompt'), style: const TextStyle(fontWeight: FontWeight.bold)); }))),
     );
@@ -659,8 +695,56 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(width: 48), 
+        IconButton(
+          icon: const Icon(Icons.help_outline, color: Colors.blue, size: 28),
+          onPressed: () => _showPreparationHelp(),
+          tooltip: ol('help'),
+        ),
       ],
+    );
+  }
+
+  void _showPreparationHelp() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.help_outline, color: Colors.blue),
+            const SizedBox(width: 10),
+            Text(ol('prep_help_title')),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildHelpItem(Icons.touch_app, ol('help_prep_1')),
+            _buildHelpItem(Icons.back_hand, ol('help_prep_2')),
+            _buildHelpItem(Icons.edit_location, ol('help_prep_3')),
+            _buildHelpItem(Icons.note_add, ol('help_prep_4')),
+            _buildHelpItem(Icons.save, ol('help_prep_5')),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(ol('ok'), style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHelpItem(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: Colors.blueGrey),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
+        ],
+      ),
     );
   }
 
@@ -683,8 +767,69 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildTrackingBanner(LocaData ld, SettingsState settings) { final distStr = settings.formatDistance(ld.travelledLengthDble); final speedStr = settings.formatSpeed(ld.speedValue / 3.6); return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [ IconButton(icon: Icon(settings.showDestinationLine ? Icons.linear_scale : Icons.explore_outlined, color: Colors.brown), onPressed: () { }, tooltip: ol('show_compass_tooltip')), Expanded(child: Text("${ol('to')} ${ld.activeTarget?.name} | $distStr | $speedStr", style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center)), IconButton(icon: const Icon(Icons.note_add, color: Colors.brown), onPressed: _handleAddNote, tooltip: ol('add_note')), IconButton(icon: const Icon(Icons.bar_chart, color: Colors.brown), onPressed: () => Navigator.pushNamed(context, StatsScreen.id), tooltip: ol('trip_stats')) ]); }
-  Widget _buildSimulationBanner(LocaData ld, SettingsState settings) => Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [IconButton(icon: Icon(settings.showDestinationLine ? Icons.linear_scale : Icons.explore_outlined, color: Colors.brown), onPressed: () { }, tooltip: ol('show_compass_tooltip')), IconButton(icon: const Icon(Icons.fast_rewind), onPressed: () => setState(() { _simulationSpeed = (_simulationSpeed - 1.0).clamp(1.0, 10.0); if(_simulationState == SimulationState.running) _startSimulationTimer(); }), tooltip: ol('simulation_speed_decrease')), Text('x${_simulationSpeed.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold)), IconButton(icon: const Icon(Icons.fast_forward), onPressed: () => setState(() { _simulationSpeed = (_simulationSpeed + 1.0).clamp(1.0, 10.0); if(_simulationState == SimulationState.running) _startSimulationTimer(); }), tooltip: ol('simulation_speed_increase')), IconButton(icon: const Icon(Icons.bar_chart, color: Colors.brown), onPressed: () => Navigator.pushNamed(context, StatsScreen.id), tooltip: ol('trip_stats'))]);
+  Widget _buildTrackingBanner(LocaData ld, SettingsState settings) { 
+    final distStr = settings.formatDistance(ld.travelledLengthDble); 
+    final speedStr = settings.formatSpeed(ld.speedValue / 3.6); 
+    
+    // Logique du bouton boussole / pointillés
+    Widget compassButton;
+    if (settings.showDestinationLine) {
+      compassButton = IconButton(
+        icon: const Text('..', style: TextStyle(color: Colors.brown, fontSize: 30, fontWeight: FontWeight.bold)), 
+        onPressed: null, // Inactif quand la ligne rouge est forcée par les paramètres
+        tooltip: ol('destination_line')
+      );
+    } else {
+      compassButton = IconButton(
+        icon: const Icon(Icons.explore_outlined, color: Colors.brown),
+        onPressed: () {
+          setState(() => _showCompassTemp = true);
+          _compassTimer?.cancel();
+          _compassTimer = Timer(const Duration(seconds: 10), () {
+            if (mounted) setState(() => _showCompassTemp = false);
+          });
+        },
+        tooltip: ol('show_compass_tooltip')
+      );
+    }
+
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [ 
+      compassButton,
+      Expanded(child: Text("${ol('to')} ${ld.activeTarget?.name} | $distStr | $speedStr", style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center)), 
+      IconButton(icon: const Icon(Icons.bar_chart, color: Colors.brown), onPressed: () => Navigator.pushNamed(context, StatsScreen.id), tooltip: ol('trip_stats')) 
+    ]); 
+  }
+
+  Widget _buildSimulationBanner(LocaData ld, SettingsState settings) {
+    Widget compassButton;
+    if (settings.showDestinationLine) {
+      compassButton = IconButton(
+        icon: const Text('..', style: TextStyle(color: Colors.brown, fontSize: 30, fontWeight: FontWeight.bold)), 
+        onPressed: null, 
+        tooltip: ol('destination_line')
+      );
+    } else {
+      compassButton = IconButton(
+        icon: const Icon(Icons.explore_outlined, color: Colors.brown),
+        onPressed: () {
+          setState(() => _showCompassTemp = true);
+          _compassTimer?.cancel();
+          _compassTimer = Timer(const Duration(seconds: 10), () {
+            if (mounted) setState(() => _showCompassTemp = false);
+          });
+        },
+        tooltip: ol('show_compass_tooltip')
+      );
+    }
+
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+      compassButton,
+      IconButton(icon: const Icon(Icons.fast_rewind), onPressed: () => setState(() { _simulationSpeed = (_simulationSpeed - 1.0).clamp(1.0, 10.0); if(_simulationState == SimulationState.running) _startSimulationTimer(); }), tooltip: ol('simulation_speed_decrease')), 
+      Text('x${_simulationSpeed.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold)), 
+      IconButton(icon: const Icon(Icons.fast_forward), onPressed: () => setState(() { _simulationSpeed = (_simulationSpeed + 1.0).clamp(1.0, 10.0); if(_simulationState == SimulationState.running) _startSimulationTimer(); }), tooltip: ol('simulation_speed_increase')), 
+      IconButton(icon: const Icon(Icons.bar_chart, color: Colors.brown), onPressed: () => Navigator.pushNamed(context, StatsScreen.id), tooltip: ol('trip_stats'))
+    ]);
+  }
 
   void _handleSimulate() async { final n = Navigator.of(context); if (context.read<LocaData>().isTracking) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('simulation_disabled_during_tracking')))); return; } n.pop(); final tn = await n.pushNamed(TracksScreen.id, arguments: true); if (tn is String && tn.isNotEmpty) _startSimulation(tn); }
   Future<void> _handleTakePhoto() async { final ImagePicker pkr = ImagePicker(); final ld = context.read<LocaData>(); final XFile? photo = await pkr.pickImage(source: ImageSource.camera, maxWidth: 400, imageQuality: 60); if (photo != null && mounted) { final bytes = await photo.readAsBytes(); if (!mounted) return; final base64V = base64Encode(bytes); if (_currentPosition == null) return; final actualPos = ld.addPhotoAtPosition(_currentPosition!, base64V); _addNoteMarker(actualPos, '', photoVignette: base64V); _showNoteEditDialog(actualPos, '', null, base64V); } }

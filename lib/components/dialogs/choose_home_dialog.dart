@@ -7,8 +7,18 @@ import '../routs.dart';
 class ChooseHomeDialog extends StatefulWidget {
   final List<Home> homes;
   final Function(Home) onDelete;
+  final String? title;
+  final String? subtitle;
+  final bool onlyAerodromes;
 
-  const ChooseHomeDialog({super.key, required this.homes, required this.onDelete});
+  const ChooseHomeDialog({
+    super.key, 
+    required this.homes, 
+    required this.onDelete,
+    this.title,
+    this.subtitle,
+    this.onlyAerodromes = false,
+  });
 
   @override
   State<ChooseHomeDialog> createState() => _ChooseHomeDialogState();
@@ -38,17 +48,33 @@ class _ChooseHomeDialogState extends State<ChooseHomeDialog> {
   @override
   Widget build(BuildContext context) {
     final homeService = Provider.of<HomeService>(context, listen: false);
+    
+    // Filtrage des homes si demandé
+    final displayedHomes = widget.onlyAerodromes 
+        ? widget.homes.where((h) => h.isAerodrome).toList()
+        : widget.homes;
+
     return AlertDialog(
-      title: Text(ol('choose_destination')),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.title ?? ol('choose_destination')),
+          if (widget.subtitle != null)
+            Text(
+              widget.subtitle!,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.grey),
+            ),
+        ],
+      ),
       content: SizedBox(
         width: double.maxFinite,
-        child: widget.homes.isEmpty
+        child: displayedHomes.isEmpty
             ? Text(ol('no_destination_available'))
             : ListView.builder(
                 shrinkWrap: true,
-                itemCount: widget.homes.length,
+                itemCount: displayedHomes.length,
                 itemBuilder: (context, index) {
-                  final home = widget.homes[index];
+                  final home = displayedHomes[index];
                   final isSelected =
                       _selectedHome != null && _selectedHome!.name == home.name;
                   return ListTile(

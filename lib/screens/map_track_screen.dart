@@ -169,7 +169,7 @@ class _MapTrackState extends State<MapTrack> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.memory(vignetteBytes!, height: 250, width: 250, fit: BoxFit.contain),
+                            child: Image.memory(vignetteBytes, height: 250, width: 250, fit: BoxFit.contain),
                           ),
                           Positioned(
                             bottom: 8,
@@ -368,7 +368,7 @@ class _MapTrackState extends State<MapTrack> {
                 icon: (vignette != null) ? (_photoIcon ?? BitmapDescriptor.defaultMarker) : (_noteIcon ?? BitmapDescriptor.defaultMarker),
                 onTap: () => _showNoteEditDialog(trackName, i, finalNote, pauseDuration: finalPause, vignetteBase64: finalVignette),
               ));
-            } else if (settings.showPauseMarkers && pause != null && pause >= 600) { // Changé à 600 (10 min)
+            } else if (settings.showPauseMarkers && pause != null && pause >= 600) { 
               markers.add(Marker(
                 markerId: MarkerId('pause_${i}_$trackName'),
                 position: latLng,
@@ -383,8 +383,18 @@ class _MapTrackState extends State<MapTrack> {
       if (trackCoords.isNotEmpty) {
         polylines.add(Polyline(polylineId: PolylineId(trackName), points: trackCoords, color: _getNextColor(), width: 4));
         allCoordinates.addAll(trackCoords);
-        markers.add(Marker(markerId: MarkerId('start_$trackName'), position: trackCoords.first, icon: _startIcon ?? BitmapDescriptor.defaultMarker));
-        markers.add(Marker(markerId: MarkerId('end_$trackName'), position: trackCoords.last, icon: _endIcon ?? BitmapDescriptor.defaultMarker));
+        markers.add(Marker(
+          markerId: MarkerId('start_$trackName'), 
+          position: trackCoords.first, 
+          icon: _startIcon ?? BitmapDescriptor.defaultMarker,
+          infoWindow: InfoWindow(title: ol('departure_point')),
+        ));
+        markers.add(Marker(
+          markerId: MarkerId('end_$trackName'), 
+          position: trackCoords.last, 
+          icon: _endIcon ?? BitmapDescriptor.defaultMarker,
+          infoWindow: InfoWindow(title: ol('destination')),
+        ));
       }
     }
 

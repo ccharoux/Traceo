@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'components/routs.dart';
 import 'models/home_service.dart';
 import 'models/location_service.dart';
 import 'models/track_data.dart';
@@ -86,12 +85,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           Locale('en', ''),
           Locale('es', ''),
         ],
-        home: Builder(
-          builder: (context) {
-            updateLanguage(context);
-            return const MapScreen();
-          }
-        ),
+        home: const MapScreen(),
         routes: {
           MapTrack.id: (context) => const MapTrack(),
           StatsScreen.id: (context) => const StatsScreen(),

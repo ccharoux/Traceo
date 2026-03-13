@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../models/track.dart';
+import '../components/routs.dart';
 
 class TrackTile extends StatelessWidget {
   final Track track;
@@ -69,21 +70,21 @@ class TrackTile extends StatelessWidget {
                       track.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 15,
                         color: Colors.brown,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                        const Icon(Icons.calendar_today, size: 13, color: Colors.grey),
                         const SizedBox(width: 5),
                         Expanded(
                           child: Text(
                             track.start,
-                            style: const TextStyle(color: Colors.black87, fontSize: 13),
+                            style: const TextStyle(color: Colors.black87, fontSize: 12),
                           ),
                         ),
                       ],
@@ -91,13 +92,25 @@ class TrackTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.straighten, size: 14, color: Colors.grey),
+                        const Icon(Icons.straighten, size: 13, color: Colors.grey),
                         const SizedBox(width: 5),
                         Text(
                           '${track.distance.toStringAsFixed(2)} km',
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.blueGrey,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        const Icon(Icons.access_time, size: 13, color: Colors.grey),
+                        const SizedBox(width: 5),
+                        Text(
+                          affTime(track.duree.toString(), false),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blueGrey,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -105,9 +118,12 @@ class TrackTile extends StatelessWidget {
                   ],
                 ),
               ),
-              // Indicateur de sélection (optionnel)
+              // Indicateur de sélection
               if (track.isDone)
-                const Icon(Icons.check_circle, color: Colors.blue, size: 24),
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Icon(Icons.check_circle, color: Colors.blue, size: 24),
+                ),
             ],
           ),
         ),

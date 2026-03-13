@@ -38,6 +38,7 @@ class LocaData with ChangeNotifier {
   Home? _activeTarget;
   int _currentWaypointIndex = 0;
   String? nextHeadingMessage;
+  final List<int> _triggeredSegmentNotes = [];
 
   bool destType=false;
   String distanceTarget = "0 m";
@@ -64,6 +65,7 @@ class LocaData with ChangeNotifier {
     isTracking = true;
     _currentWaypointIndex = (_activeTarget != null && _activeTarget!.isRoute && (_activeTarget!.routePoints?.length ?? 0) > 1) ? 1 : 0;
     nextHeadingMessage = null;
+    _triggeredSegmentNotes.clear();
     notifyListeners();
   }
 
@@ -76,6 +78,7 @@ class LocaData with ChangeNotifier {
     _activeTarget = newTarget;
     _currentWaypointIndex = (newTarget.isRoute && (newTarget.routePoints?.length ?? 0) > 1) ? 1 : 0;
     nextHeadingMessage = null;
+    _triggeredSegmentNotes.clear();
     
     // Charger les notes et photos si elles existent dans le Home
     notes.clear();
@@ -91,6 +94,7 @@ class LocaData with ChangeNotifier {
     _activeTarget = null;
     _currentWaypointIndex = 0;
     nextHeadingMessage = null;
+    _triggeredSegmentNotes.clear();
     distanceTarget = "0 m";
     bearingToTarget = "0°";
     bearingToTargetDble = 0.0;
@@ -153,6 +157,7 @@ class LocaData with ChangeNotifier {
 
     recalculateTargetMetrics(newPosition);
     _checkWaypointProximity(newPosition);
+    _checkSegmentNotesProximity(newPosition);
     
     return true;
   }
@@ -181,6 +186,47 @@ class LocaData with ChangeNotifier {
       
       nextHeadingMessage = "${ol('wp_reached')} ${targetWP['name']}\n${ol('heading_to')} ${nextWP['name']}: ${nextBearing.toStringAsFixed(0)}°";
       notifyListeners();
+    }
+  }
+
+  void _checkSegmentNotesProximity(Position currentPosition) {
+    if (_activeTarget == null || !_activeTarget!.isRoute || _activeTarget!.segmentNotes == null) return;
+    
+    final notes = _activeTarget!.segmentNotes!;
+    final routePoints = _activeTarget!.routePoints!;
+
+    for (int i = 0; i < notes.length; i++) {
+      if (_triggeredSegmentNotes.contains(i)) continue;
+
+      final note = notes[i];
+      final int segIdx = note['segmentIndex'];
+      if (segIdx >= routePoints.length - 1) continue;
+      
+      final p1 = routePoints[segIdx];
+      final p2 = routePoints[segIdx+1];
+
+      final notePos = Geolocator.distanceBetween(
+        p1['lat'], p1['lon'],
+        p2['lat'], p2['lon'],
+      ) * note['ratio'];
+
+      final bearingToNote = Geolocator.bearingBetween(p1['lat'], p1['lon'], p2['lat'], p2['lon']);
+      
+      final noteLat = p1['lat'] + (notePos / 111111) * Geolocator.bearingBetween(0,0,1,0);
+      final noteLon = p1['lon'] + (notePos / (111111 * Geolocator.bearingBetween(0,0,0,1))) * Geolocator.bearingBetween(0,0,0,1);
+
+      double distToNote = Geolocator.distanceBetween(
+        currentPosition.latitude, currentPosition.longitude,
+        noteLat, noteLon,
+      );
+      
+      // Si on est à moins de 500m de la note
+      if (distToNote < 500) {
+        nextHeadingMessage = "${ol('note_prefix')} ${note['text']}";
+        _triggeredSegmentNotes.add(i);
+        notifyListeners();
+        break; // On n'affiche qu'une note à la fois
+      }
     }
   }
 
@@ -304,6 +350,7 @@ class LocaData with ChangeNotifier {
     _activeTarget = null;
     _currentWaypointIndex = 0;
     nextHeadingMessage = null;
+    _triggeredSegmentNotes.clear();
     notifyListeners();
   }
 

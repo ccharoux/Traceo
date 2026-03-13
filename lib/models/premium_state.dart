@@ -112,25 +112,12 @@ class PremiumState extends ChangeNotifier {
     await _loadPremiumState();
   }
 
-  Future<bool> checkSecretCode(String code) async {
-    // Désormais les codes ACTIVENT toujours (pas de bascule Off) pour éviter les erreurs de manipulation
-    if (code == "Traceo2024" || code == "TraceoFull") {
-      await _setPremiumState(_keyFull, true);
-      return true;
-    }
-    if (code == "TraceoArchive" || code == "TraceArchive") {
-      await _setPremiumState(_keyArchives, true);
-      return true;
-    }
-    return false;
-  }
-
   Future<void> buyPremiumArchives() async {
-    _buyProduct(_idArchives);
+    await _buyProduct(_idArchives);
   }
 
   Future<void> buyPremium() async {
-    _buyProduct(_idPack);
+    await _buyProduct(_idPack);
   }
 
   Future<void> _buyProduct(String id) async {

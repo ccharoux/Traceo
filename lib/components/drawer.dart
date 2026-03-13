@@ -134,59 +134,6 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  void _showSecretCodeDialog(BuildContext context) {
-    final TextEditingController codeController = TextEditingController();
-    final premiumState = context.read<PremiumState>();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Code Secret"),
-        content: TextField(
-          controller: codeController,
-          autofocus: true,
-          decoration: const InputDecoration(hintText: "Entrez le code"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Annuler"),
-          ),
-          TextButton(
-            onPressed: () async {
-              final code = codeController.text.trim();
-              final success = await premiumState.checkSecretCode(code);
-              if (context.mounted) {
-                Navigator.pop(context);
-                
-                String message = "Code incorrect";
-                if (success) {
-                  if (code == "TraceoArchive" || code == "TraceArchive") {
-                    message = premiumState.isPremiumArchives 
-                        ? "Option Archives activée !" 
-                        : "Option Archives désactivée";
-                  } else {
-                    message = premiumState.isPremium 
-                        ? "Pack Premium activé !" 
-                        : "Pack Premium désactivé";
-                  }
-                }
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(message),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
-            child: const Text("Valider"),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final premiumState = context.watch<PremiumState>();
@@ -215,12 +162,9 @@ class AppDrawer extends StatelessWidget {
                         'Trackeo',
                         style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      GestureDetector(
-                        onLongPress: () => _showSecretCodeDialog(context),
-                        child: Text(
-                          "Version $cleanVersion",
-                          style: const TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
+                      Text(
+                        "Version $cleanVersion",
+                        style: const TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                     ],
                   ),

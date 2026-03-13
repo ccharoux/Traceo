@@ -131,7 +131,7 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               ),
               TextSpan(text: ol('doc_single_plus_cut')),
               const TextSpan(text: "\n"),
-              TextSpan(text: ol('doc-single_to_cut')),
+              TextSpan(text: ol('doc_single_to_cut')),
 
               //------------------------------
               // Section for multiple tracks
@@ -293,7 +293,7 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               TextSpan(text: ol('doc_vac_body_7')),
 
               //---------------------------
-              // --- Réglages Section (V16) ---
+              // --- Réglages Section ---
               //---------------------------
               const TextSpan(text: "\n\n"),
               TextSpan(
@@ -308,11 +308,28 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               TextSpan(text: ol('doc_settings_destline')),
 
               //---------------------------
+              // --- Simulation Section ---
+              //---------------------------
+              const TextSpan(text: "\n\n"),
+              TextSpan(
+                text: ol('doc_simu_title'),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              const TextSpan(text: "\n"),
+              TextSpan(text: ol('doc_simu_body')),
+              const WidgetSpan(
+                child: Icon(Icons.slideshow, size: iconSize),
+                alignment: PlaceholderAlignment.middle,
+              ),
+              const TextSpan(text: " "),
+              TextSpan(text: ol('doc_simu_usage')),
+
+              //---------------------------
               // --- Pack Premium Section ---
               //---------------------------
               const TextSpan(text: "\n\n"),
               TextSpan(
-                text: ol('doc_premium_title'),
+                text: ol('premium_title'),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const TextSpan(text: "\n"),

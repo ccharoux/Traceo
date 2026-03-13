@@ -110,7 +110,7 @@ class SettingsState extends ChangeNotifier {
   String formatDistance(double meters) {
     switch (_unit) {
       case DistanceUnit.kilometers:
-        if (meters < 1000) {
+        if (meters < 999.5) {
           return '${meters.toStringAsFixed(0)} m';
         } else {
           return '${(meters / 1000).toStringAsFixed(2)} km';

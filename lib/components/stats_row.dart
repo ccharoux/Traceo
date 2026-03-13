@@ -21,40 +21,58 @@ class StatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(
-                firstElem,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  color: colour,
+              Expanded(
+                child: Text(
+                  firstElem,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: fontSize * 0.8, // Slightly smaller for labels
+                    color: colour,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              Text(
-                secondElem,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  color: colour,
+              Expanded(
+                child: Text(
+                  secondElem,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: fontSize * 0.8,
+                    color: colour,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 4),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(
-                thirdElem,
-                style: TextStyle(color: Colors.black, fontSize: fontSize),
+              Expanded(
+                child: Text(
+                  thirdElem,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-              Text(
-                fourthElem,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  color: Colors.black,
+              Expanded(
+                child: Text(
+                  fourthElem,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
