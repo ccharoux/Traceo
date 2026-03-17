@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../components/map_type_dialog.dart';
 import '../models/track_data.dart';
@@ -211,7 +212,7 @@ class _MapTrackState extends State<MapTrack> {
                   child: Text(ol('delete'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                 ),
                 const Spacer(),
-                if (pauseDuration != null && pauseDuration >= 600)
+                if (pauseDuration != null)
                   Padding(
                     padding: const EdgeInsets.only(right: 10.0),
                     child: Text(affTime(pauseDuration.toString(), true), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 14)),
@@ -282,7 +283,6 @@ class _MapTrackState extends State<MapTrack> {
         bytes = await photo.readAsBytes();
       }
     } else if (action == 'files') {
-      // Utilisation de FileType.custom pour forcer l'accès au NAS/Réseau
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'heic', 'webp'],
@@ -327,6 +327,7 @@ class _MapTrackState extends State<MapTrack> {
     Set<Polyline> polylines = {};
     Set<Marker> markers = {};
     List<LatLng> allCoordinates = [];
+    final timeFormat = DateFormat('HH:mm');
 
     for (String trackName in trackNames) {
       final file = File('${trackData.trackPath}/$trackName.txt');
@@ -335,45 +336,57 @@ class _MapTrackState extends State<MapTrack> {
       if (lines.length < 8) continue;
 
       List<LatLng> trackCoords = [];
+      DateTime? startTime;
+      DateTime? endTime;
+      DateTime? lastPointTime;
+
       for (int i = 7; i < lines.length; i++) {
         final parts = lines[i].split(' ');
         if (parts.length >= 4) {
           final lat = double.tryParse(parts[0]);
           final lng = double.tryParse(parts[1]);
+          final time = DateTime.tryParse(parts[3]);
+
           if (lat != null && lng != null) {
             final latLng = LatLng(lat, lng);
             trackCoords.add(latLng);
+            
+            if (startTime == null && time != null) startTime = time.toLocal();
+            if (time != null) endTime = time.toLocal();
 
+            // CALCUL DYNAMIQUE DES PAUSES
+            if (settings.showPauseMarkers && time != null && lastPointTime != null) {
+              final diffSeconds = time.difference(lastPointTime).inSeconds;
+              if (diffSeconds >= (settings.minPauseDuration * 60)) {
+                markers.add(Marker(
+                  markerId: MarkerId('pause_${i}_$trackName'),
+                  position: latLng,
+                  icon: _pauseIcon ?? BitmapDescriptor.defaultMarker,
+                  infoWindow: InfoWindow(title: ol('stop'), snippet: affTime(diffSeconds.toString(), true)),
+                ));
+              }
+            }
+            lastPointTime = time;
+
+            // NOTES ET PHOTOS
             String? note;
             String? vignette;
-            int? pause;
-
             for (var part in parts.sublist(4)) {
               if (part.startsWith("vignette:")) {
                 vignette = part.substring(9);
               } else if (part.startsWith("pause:")) {
-                pause = int.tryParse(part.substring(6));
+                // On ignore les pauses stockées dans le fichier (ancienne méthode)
               } else {
                 note = (note == null) ? Uri.decodeComponent(part) : "$note ${Uri.decodeComponent(part)}";
               }
             }
 
             if (note != null || vignette != null) {
-              final finalNote = note ?? '';
-              final finalVignette = vignette;
-              final finalPause = pause;
               markers.add(Marker(
                 markerId: MarkerId('note_${i}_$trackName'),
                 position: latLng,
                 icon: (vignette != null) ? (_photoIcon ?? BitmapDescriptor.defaultMarker) : (_noteIcon ?? BitmapDescriptor.defaultMarker),
-                onTap: () => _showNoteEditDialog(trackName, i, finalNote, pauseDuration: finalPause, vignetteBase64: finalVignette),
-              ));
-            } else if (settings.showPauseMarkers && pause != null && pause >= 600) { 
-              markers.add(Marker(
-                markerId: MarkerId('pause_${i}_$trackName'),
-                position: latLng,
-                icon: _pauseIcon ?? BitmapDescriptor.defaultMarker,
-                infoWindow: InfoWindow(title: ol('stop'), snippet: affTime(pause.toString(), true)),
+                onTap: () => _showNoteEditDialog(trackName, i, note ?? '', vignetteBase64: vignette),
               ));
             }
           }
@@ -383,17 +396,21 @@ class _MapTrackState extends State<MapTrack> {
       if (trackCoords.isNotEmpty) {
         polylines.add(Polyline(polylineId: PolylineId(trackName), points: trackCoords, color: _getNextColor(), width: 4));
         allCoordinates.addAll(trackCoords);
+        
+        final String startStr = startTime != null ? " (${timeFormat.format(startTime)})" : "";
+        final String endStr = endTime != null ? " (${timeFormat.format(endTime)})" : "";
+
         markers.add(Marker(
           markerId: MarkerId('start_$trackName'), 
           position: trackCoords.first, 
           icon: _startIcon ?? BitmapDescriptor.defaultMarker,
-          infoWindow: InfoWindow(title: ol('departure_point')),
+          infoWindow: InfoWindow(title: "${ol('departure_point')}$startStr"),
         ));
         markers.add(Marker(
           markerId: MarkerId('end_$trackName'), 
           position: trackCoords.last, 
           icon: _endIcon ?? BitmapDescriptor.defaultMarker,
-          infoWindow: InfoWindow(title: ol('destination')),
+          infoWindow: InfoWindow(title: "${ol('destination')}$endStr"),
         ));
       }
     }

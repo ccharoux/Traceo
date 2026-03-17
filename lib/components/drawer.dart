@@ -91,11 +91,29 @@ class AppDrawer extends StatelessWidget {
                       value: settings.showDestinationLine,
                       onChanged: (val) => settings.setShowDestinationLine(val),
                     ),
-                    SwitchListTile(
-                      title: Text(ol('stop_time')),
+                    const Divider(),
+                    ListTile(
+                      title: Text(ol('stop_time'), style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text(ol('stop_time_sub')),
-                      value: settings.showPauseMarkers,
-                      onChanged: (val) => settings.setShowPauseMarkers(val),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: DropdownButton<int>(
+                        isExpanded: true,
+                        value: settings.minPauseDuration,
+                        items: [
+                          DropdownMenuItem(value: 0, child: Text(ol('no'))),
+                          ...[5, 10, 15, 20, 30, 45, 60].map((m) => DropdownMenuItem(
+                            value: m,
+                            child: Text("$m min"),
+                          )),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) {
+                            settings.setMinPauseDuration(val);
+                          }
+                        },
+                      ),
                     ),
                     if (isPremium) ...[
                       const Divider(),
@@ -139,7 +157,6 @@ class AppDrawer extends StatelessWidget {
     final premiumState = context.watch<PremiumState>();
     final isPremium = premiumState.isPremium;
 
-    // On nettoie la version pour ne garder que le nom (ex: 1.1.0) sans le numéro de build entre parenthèses
     String cleanVersion = version;
     if (version.contains('(')) {
       cleanVersion = version.split('(')[0].trim();

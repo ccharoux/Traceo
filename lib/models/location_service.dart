@@ -128,11 +128,6 @@ class LocaData with ChangeNotifier {
 
     if (isMoving) { 
       if (_pauseStartTime != null) {
-        final pauseDuration = newPosition.timestamp.difference(_pauseStartTime!).inSeconds;
-        if (pauseDuration >= 600) { // Marqueur bleu seulement après 10 minutes d'arrêt
-          final String pauseKey = _noteInCurrentPauseKey ?? _getPosKey(lastPosition.timestamp);
-          pauses[pauseKey] = pauseDuration;
-        }
         _pauseStartTime = null;
         _noteInCurrentPauseKey = null;
       }

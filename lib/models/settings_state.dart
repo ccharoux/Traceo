@@ -9,18 +9,19 @@ enum DistanceUnit { kilometers, nauticalMiles, miles }
 class SettingsState extends ChangeNotifier {
   static const String _unitKey = 'settings_distance_unit';
   static const String _showDestinationLineKey = 'settings_show_destination_line';
-  static const String _showPauseMarkersKey = 'settings_show_pause_markers';
+  static const String _minPauseDurationKey = 'settings_min_pause_duration';
 
   DistanceUnit _unit = DistanceUnit.kilometers;
   bool _showDestinationLine = true;
-  bool _showPauseMarkers = true;
+  int _minPauseDuration = 0; // 0 = désactivé, sinon minutes (5, 10, 15...)
   
   int _oaciTileCount = 0;
   String _oaciCacheSize = "0 Ko";
 
   DistanceUnit get unit => _unit;
   bool get showDestinationLine => _showDestinationLine;
-  bool get showPauseMarkers => _showPauseMarkers;
+  int get minPauseDuration => _minPauseDuration;
+  bool get showPauseMarkers => _minPauseDuration > 0;
   int get oaciTileCount => _oaciTileCount;
   String get oaciCacheSize => _oaciCacheSize;
 
@@ -38,7 +39,7 @@ class SettingsState extends ChangeNotifier {
       _unit = DistanceUnit.kilometers;
     }
     _showDestinationLine = prefs.getBool(_showDestinationLineKey) ?? true;
-    _showPauseMarkers = prefs.getBool(_showPauseMarkersKey) ?? true;
+    _minPauseDuration = prefs.getInt(_minPauseDurationKey) ?? 0;
     notifyListeners();
   }
 
@@ -100,10 +101,10 @@ class SettingsState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setShowPauseMarkers(bool value) async {
-    _showPauseMarkers = value;
+  Future<void> setMinPauseDuration(int minutes) async {
+    _minPauseDuration = minutes;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_showPauseMarkersKey, value);
+    await prefs.setInt(_minPauseDurationKey, minutes);
     notifyListeners();
   }
 
