@@ -7,6 +7,7 @@ class LocaData with ChangeNotifier {
   // --- APP STATE ---
   bool isTracking = false;
   bool isAddingNote = false;
+  bool isSimulatedFlight = false;
 
   // --- TRACE DATA ---
   List<Position> trace = [];
@@ -30,8 +31,10 @@ class LocaData with ChangeNotifier {
   List<Position> _simulationData = [];
   List<Position> get simulationData => _simulationData;
 
-  void setSimulationData(List<Position> data) {
+  void setSimulationData(List<Position> data, {bool isFlight = false}) {
     _simulationData = data;
+    isSimulatedFlight = isFlight;
+    notifyListeners();
   }
 
   // --- TARGET DATA ---
@@ -63,6 +66,7 @@ class LocaData with ChangeNotifier {
 
   void startTracking() {
     isTracking = true;
+    isSimulatedFlight = false;
     _currentWaypointIndex = (_activeTarget != null && _activeTarget!.isRoute && (_activeTarget!.routePoints?.length ?? 0) > 1) ? 1 : 0;
     nextHeadingMessage = null;
     _triggeredSegmentNotes.clear();
@@ -321,6 +325,7 @@ class LocaData with ChangeNotifier {
   void reset() {
     isTracking = false;
     isAddingNote = false;
+    isSimulatedFlight = false;
     trace.clear();
     notes.clear();
     pauses.clear();

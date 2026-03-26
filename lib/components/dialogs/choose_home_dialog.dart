@@ -93,7 +93,28 @@ class _ChooseHomeDialogState extends State<ChooseHomeDialog> {
                     },
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => widget.onDelete(home),
+                      onPressed: () async {
+                        final bool? confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(ol('delete')),
+                            content: Text("${ol('delete_destination_confirm_message')} '${home.name}' ?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(false),
+                                child: Text(ol('cancel')),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(true),
+                                child: Text(ol('delete'), style: const TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true) {
+                          widget.onDelete(home);
+                        }
+                      },
                     ),
                   );
                 },

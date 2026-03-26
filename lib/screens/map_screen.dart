@@ -71,7 +71,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   String _actualTitle = ' ';
 
   Position? _currentPosition;
-  bool _isSimulatedFlight = false;
 
   // ÉTATS POUR LA PRÉPARATION DE VOL
   bool _isPreparingFlight = false;
@@ -214,7 +213,6 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       _actualTitle = ' '; 
       _polylines.clear(); 
       _markers.clear(); 
-      _isSimulatedFlight = false;
       _isPreparingFlight = false;
       _isPlacingRouteNote = false;
       _pointsHistory.clear();
@@ -529,10 +527,13 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     if (!await file.exists()) return;
     final lines = await file.readAsLines();
     if (!mounted) return;
-    bool isFlight = lines.any((l) => l.trim() == "isFlight:true");
+    
+    // Détection plus robuste du flag isFlight (en ignorant la casse et les espaces éventuels)
+    bool isFlight = lines.any((l) => l.toLowerCase().contains("isflight:true"));
+    
     final List<Position> simulatedPositions = [];
     for (final line in lines.skip(7)) {
-      if (line.startsWith("isFlight:")) continue;
+      if (line.toLowerCase().startsWith("isflight:")) continue;
       final parts = line.split(' ');
       if (parts.length >= 4) {
         final lat = double.tryParse(parts[0]), lon = double.tryParse(parts[1]), alt = double.tryParse(parts[2]), time = DateTime.tryParse(parts[3]);
@@ -557,8 +558,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     if (simulatedPositions.isEmpty) { if (mounted) messenger.showSnackBar(SnackBar(content: Text(ol('no_simulation_data')))); return; }
     await _resetMapState(trackName, simulatedPositions.first);
     if (!mounted) return;
-    setState(() => _isSimulatedFlight = isFlight);
-    locaData.setSimulationData(simulatedPositions);
+    
+    // On passe le flag isFlight à locaData pour qu'il soit partagé correctement
+    locaData.setSimulationData(simulatedPositions, isFlight: isFlight);
     _resumeSimulation();
   }
 
@@ -616,10 +618,40 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }
   }
 
-  void _updateCurrentPositionMarker() { if (_currentPosition == null) return; final locaData = context.read<LocaData>(); final icon = (locaData.activeTarget?.isAerodrome == true || _isSimulatedFlight) ? _airplaneIcon : _currentPositionIcon; _markers.removeWhere((m) => m.markerId.value == 'currentPos'); _markers.add(Marker(markerId: const MarkerId('currentPos'), position: LatLng(_currentPosition!.latitude, _currentPosition!.longitude), icon: icon ?? BitmapDescriptor.defaultMarker, rotation: _currentPosition!.heading, anchor: const Offset(0.5, 0.5), flat: true, zIndexInt: 2)); }
+  void _updateCurrentPositionMarker() { if (_currentPosition == null) return; final locaData = context.read<LocaData>(); final icon = (locaData.activeTarget?.isAerodrome == true || locaData.isSimulatedFlight) ? _airplaneIcon : _currentPositionIcon; _markers.removeWhere((m) => m.markerId.value == 'currentPos'); _markers.add(Marker(markerId: const MarkerId('currentPos'), position: LatLng(_currentPosition!.latitude, _currentPosition!.longitude), icon: icon ?? BitmapDescriptor.defaultMarker, rotation: _currentPosition!.heading, anchor: const Offset(0.5, 0.5), flat: true, zIndexInt: 2)); }
   Future<void> _animateCameraToPosition(Position position) async { (await _mapController.future).animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: _currentZoom, bearing: _isTopDownView ? 0 : position.heading))); }
 
-  void _showCacheInfo() async { final info = await _OpenAIPTileProvider.getCacheInfo(); if (!mounted) return; showDialog( context: context, builder: (context) => AlertDialog( title: Text(ol('oaci_cache')), content: Column( mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [ Text("${ol('tiles_count')} ${info['count']}"), Text("${ol('cache_size')} ${info['size'].toStringAsFixed(2)} Mo"), ], ), actions: [ TextButton( onPressed: () async { await _OpenAIPTileProvider.clearCache(); if (context.mounted) { Navigator.of(context).pop(); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('cache_cleared')))); } }, child: Text(ol('clear_cache'), style: const TextStyle(color: Colors.red)), ), TextButton( onPressed: () => Navigator.of(context).pop(), child: Text(ol('ok')), ), ], ), ); }
+  void _showCacheInfo() async { 
+    final info = await _OpenAIPTileProvider.getCacheInfo(); 
+    if (!mounted) return; 
+    showDialog( context: context, builder: (context) => AlertDialog( title: Text(ol('oaci_cache')), content: Column( mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [ Text("${ol('tiles_count')} ${info['count']}"), Text("${ol('cache_size')} ${info['size'].toStringAsFixed(2)} Mo"), ], ), actions: [ 
+      TextButton( onPressed: () async { 
+        final settings = context.read<SettingsState>();
+        final success = await settings.exportOaciCache();
+        if (context.mounted) {
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('export_success'))));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('error_exporting_cache'))));
+          }
+        }
+      }, child: Text(ol('export_cache'))),
+      TextButton( onPressed: () async { 
+        final settings = context.read<SettingsState>();
+        final success = await settings.importOaciCache();
+        if (context.mounted) {
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('import_success'))));
+            Navigator.of(context).pop();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('error_importing_cache'))));
+          }
+        }
+      }, child: Text(ol('import_cache'))),
+      TextButton( onPressed: () async { await _OpenAIPTileProvider.clearCache(); if (context.mounted) { Navigator.of(context).pop(); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('cache_cleared')))); } }, child: Text(ol('clear_cache'), style: const TextStyle(color: Colors.red)), ), 
+      TextButton( onPressed: () => Navigator.of(context).pop(), child: Text(ol('ok')), ), 
+    ], ), ); 
+  }
   void _showFullImageDialog(Uint8List bytes) { showDialog( context: context, builder: (context) => Dialog( backgroundColor: Colors.transparent, insetPadding: const EdgeInsets.all(10), child: Stack( alignment: Alignment.center, children: [ GestureDetector( onTap: () => Navigator.of(context).pop(), child: InteractiveViewer( minScale: 0.5, maxScale: 4.0, child: Image.memory(bytes, fit: BoxFit.contain), ), ), Positioned( top: 10, right: 10, child: IconButton( icon: const Icon(Icons.close, color: Colors.white, size: 30), onPressed: () => Navigator.of(context).pop(), ), ), ], ), ), ); }
   void _showNoteEditDialog(Position pos, String curN, int? pD, String? pV) { 
     final isSim = _simulationState != SimulationState.stopped; final ld = context.read<LocaData>(); final messenger = ScaffoldMessenger.of(context); final String key = pos.timestamp.toLocal().toIso8601String().split('.')[0]; final pDurationEff = pD ?? ld.pauses[key] ?? ld.getPauseDuration(pos.timestamp); final noteCtrl = TextEditingController(text: ld.notes[key] ?? curN); 
@@ -634,7 +666,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   Future<BitmapDescriptor> _createCustomMarker(IconData iconData, Color color) async { final ui.PictureRecorder pictureRecorder = ui.PictureRecorder(); final Canvas canvas = Canvas(pictureRecorder); const double size = 45.0, radius = size / 2; canvas.drawCircle(const Offset(radius, radius + 1), radius - 2, Paint()..color = Colors.black.withValues(alpha: 50/255)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2)); canvas.drawCircle(const Offset(radius, radius), radius - 2, Paint()..color = Colors.white); canvas.drawCircle(const Offset(radius, radius), radius - 4, Paint()..color = color); final TextPainter textPainter = TextPainter(textDirection: ui.TextDirection.ltr)..text = TextSpan(text: String.fromCharCode(iconData.codePoint), style: TextStyle(fontSize: size * 0.5, fontFamily: iconData.fontFamily, package: iconData.fontPackage, color: Colors.white)); textPainter.layout(); textPainter.paint(canvas, Offset(radius - textPainter.width / 2, radius - textPainter.height / 2)); final ui.Image image = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt()); final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png); if (byteData == null) return BitmapDescriptor.defaultMarker; return BitmapDescriptor.bytes(byteData.buffer.asUint8List()); }
   void _handleNamePosition() async { final n = Navigator.of(context); final hs = context.read<HomeService>(); n.pop(); final homeName = await _asyncInputDialog(context, ol('name_current_position'), ol('enter_destination_name_hint')); if (homeName == null || homeName.isEmpty || _currentPosition == null) return; await hs.addHome(Home(name: homeName, latitude: _currentPosition!.latitude, longitude: _currentPosition!.longitude)); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("'$homeName' ${ol('home_saved')}"))); }
   Future<String?> _asyncInputDialog(BuildContext context, String title, String hint) async { final n = Navigator.of(context); String textValue = ''; return showDialog<String>(context: context, builder: (BuildContext context) => AlertDialog(title: Text(title), content: TextField(autofocus: true, onChanged: (value) => textValue = value, decoration: InputDecoration(hintText: hint)), actions: <Widget>[TextButton(child: Text(ol('cancel')), onPressed: () => n.pop()), TextButton(child: Text(ol('ok')), onPressed: () => n.pop(textValue))])); }
-  void _handleChangeDestination() async { final n = Navigator.of(context); final ld = context.read<LocaData>(); final hs = context.read<HomeService>(); n.pop(); final Home? newTarget = await showDialog<Home>(context: context, builder: (BuildContext context) => ChooseHomeDialog(homes: hs.homes, onDelete: (Home home) async { final n2 = Navigator.of(context); await hs.deleteHome(home.name); n2.pop(); _handleChangeDestination(); })); if (newTarget != null) { if (!ld.isTracking) await hs.saveChosenHome(newTarget); if (!mounted) return; ld.updateActiveTarget(newTarget, _currentPosition ?? _defaultPosition); _addOrUpdateHomeMarker(newTarget); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${ol('destination_set')}${newTarget.name}"))); } }
+  void _handleChangeDestination() async { final n = Navigator.of(context); final ld = context.read<LocaData>(); final hs = context.read<HomeService>(); n.pop(); final Home? newTarget = await showDialog<Home>(context: context, builder: (BuildContext context) => ChooseHomeDialog(homes: hs.homes, subtitle: ol('choose_destination'), onDelete: (Home home) async { final n2 = Navigator.of(context); await hs.deleteHome(home.name); n2.pop(); _handleChangeDestination(); })); if (newTarget != null) { if (!ld.isTracking) await hs.saveChosenHome(newTarget); if (!mounted) return; ld.updateActiveTarget(newTarget, _currentPosition ?? _defaultPosition); _addOrUpdateHomeMarker(newTarget); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${ol('destination_set')}${newTarget.name}"))); } }
   void _addOrUpdateHomeMarker(Home home) { setState(() { _markers.removeWhere((m) => m.markerId.value == 'home'); _markers.add(Marker(markerId: const MarkerId('home'), position: LatLng(home.latitude, home.longitude), icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed), infoWindow: InfoWindow(title: home.name))); }); }
   Future<void> _saveTrack() async { final ld = context.read<LocaData>(); final td = context.read<TrackData>(); if (ld.trace.length < 2) return; final tn = await formatTrackName(ld.trace.first.timestamp.toLocal()); await td.writeTrack(tn, await makeTrack(ld, tn)); }
   void _saveTrackSync() { final ld = context.read<LocaData>(); if (ld.trace.length < 2) return; final tn = DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR').format(ld.trace.first.timestamp.toLocal()); context.read<TrackData>().writeTrackSync(tn, makeTrackSync(ld: ld, tn: tn)); }
@@ -645,7 +677,11 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final locaData = context.watch<LocaData>(); final trackData = context.watch<TrackData>(); final premiumState = context.watch<PremiumState>(); final settings = context.watch<SettingsState>();
-    final bool canShowOACI = premiumState.isPremium && (locaData.activeTarget?.isAerodrome == true || _isSimulatedFlight || _isPreparingFlight);
+    final bool canShowOACI = premiumState.isPremium && (
+      (locaData.activeTarget != null && locaData.activeTarget!.isAerodrome && locaData.activeTarget!.name != ol('start_point')) || 
+      locaData.isSimulatedFlight || 
+      _isPreparingFlight
+    );
     final Set<TileOverlay> tileOverlays = {}; if (canShowOACI) tileOverlays.add(TileOverlay(tileOverlayId: const TileOverlayId('aviation_layer_stable'), tileProvider: _oaciTileProvider, zIndex: 1));
     _updateDestinationLine();
     final Set<Marker> markersToShow = settings.showPauseMarkers ? _markers : _markers.where((m) => !m.markerId.value.startsWith('pause_')).toSet();

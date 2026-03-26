@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:archive/archive_io.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
 
 enum DistanceUnit { kilometers, nauticalMiles, miles }
 
@@ -84,6 +87,73 @@ class SettingsState extends ChangeNotifier {
       await updateCacheInfo();
     } catch (e) {
       debugPrint("Erreur clear cache: $e");
+    }
+  }
+
+  Future<bool> exportOaciCache() async {
+    try {
+      final cacheDir = await getTemporaryDirectory();
+      final oaciPath = p.join(cacheDir.path, 'oaci_cache');
+      final dir = Directory(oaciPath);
+      if (!await dir.exists()) return false;
+
+      final files = dir.listSync().whereType<File>().toList();
+      if (files.isEmpty) return false;
+
+      final archive = Archive();
+      for (var file in files) {
+        final bytes = await file.readAsBytes();
+        archive.addFile(ArchiveFile(p.basename(file.path), bytes.length, bytes));
+      }
+
+      final zipEncoder = ZipEncoder();
+      final encodedZip = zipEncoder.encode(archive);
+      if (encodedZip == null) return false;
+
+      final tempDir = await getTemporaryDirectory();
+      final zipFile = File(p.join(tempDir.path, 'oaci_cache_export.zip'));
+      await zipFile.writeAsBytes(encodedZip);
+
+      await Share.shareXFiles([XFile(zipFile.path)], text: 'Export Cache OACI Traceo');
+      return true;
+    } catch (e) {
+      debugPrint("Erreur export cache: $e");
+      return false;
+    }
+  }
+
+  Future<bool> importOaciCache() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['zip'],
+      );
+
+      if (result == null || result.files.single.path == null) return false;
+
+      final zipFile = File(result.files.single.path!);
+      final bytes = await zipFile.readAsBytes();
+      final archive = ZipDecoder().decodeBytes(bytes);
+
+      final cacheDir = await getTemporaryDirectory();
+      final oaciPath = p.join(cacheDir.path, 'oaci_cache');
+      final dir = Directory(oaciPath);
+      if (!await dir.exists()) await dir.create(recursive: true);
+
+      for (final file in archive) {
+        if (file.isFile) {
+          final data = file.content as List<int>;
+          File(p.join(oaciPath, file.name))
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(data);
+        }
+      }
+
+      await updateCacheInfo();
+      return true;
+    } catch (e) {
+      debugPrint("Erreur import cache: $e");
+      return false;
     }
   }
 

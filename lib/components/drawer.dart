@@ -123,16 +123,58 @@ class AppDrawer extends StatelessWidget {
                       ListTile(
                         title: Text(ol('tiles_stored').replaceAll('%s', settings.oaciTileCount.toString())),
                         subtitle: Text(ol('space_occupied').replaceAll('%s', settings.oaciCacheSize)),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete_sweep, color: Colors.red),
-                          onPressed: () async {
-                            await settings.clearOaciCache();
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(ol('cache_cleared_msg')), duration: const Duration(seconds: 1)),
-                              );
-                            }
-                          },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.file_download, color: Colors.green),
+                              onPressed: () async {
+                                final success = await settings.importOaciCache();
+                                if (context.mounted) {
+                                  if (success) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(ol('import_success'))),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(ol('error_importing_cache'))),
+                                    );
+                                  }
+                                }
+                              },
+                              tooltip: ol('import_cache'),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.share, color: Colors.blue),
+                              onPressed: () async {
+                                final success = await settings.exportOaciCache();
+                                if (context.mounted) {
+                                  if (success) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(ol('export_cache_success'))),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(ol('error_exporting_cache'))),
+                                    );
+                                  }
+                                }
+                              },
+                              tooltip: ol('export_cache'),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_sweep, color: Colors.red),
+                              onPressed: () async {
+                                await settings.clearOaciCache();
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(ol('cache_cleared_msg')), duration: const Duration(seconds: 1)),
+                                  );
+                                }
+                              },
+                              tooltip: ol('clear_cache'),
+                            ),
+                          ],
                         ),
                       ),
                     ],
