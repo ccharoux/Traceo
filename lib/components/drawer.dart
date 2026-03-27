@@ -66,23 +66,27 @@ class AppDrawer extends StatelessWidget {
                     ListTile(
                       title: Text(ol('measurements'), style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
-                    ListTile(
-                      title: Text(ol('km_unit')),
-                      leading: Radio<DistanceUnit>(
-                        value: DistanceUnit.kilometers,
-                        groupValue: settings.unit,
-                        onChanged: (val) => settings.setUnit(val!),
+                    RadioGroup<DistanceUnit>(
+                      groupValue: settings.unit,
+                      onChanged: (val) => settings.setUnit(val!),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            title: Text(ol('km_unit')),
+                            leading: const Radio<DistanceUnit>(
+                              value: DistanceUnit.kilometers,
+                            ),
+                            onTap: () => settings.setUnit(DistanceUnit.kilometers),
+                          ),
+                          ListTile(
+                            title: Text(ol('nm_unit')),
+                            leading: const Radio<DistanceUnit>(
+                              value: DistanceUnit.nauticalMiles,
+                            ),
+                            onTap: () => settings.setUnit(DistanceUnit.nauticalMiles),
+                          ),
+                        ],
                       ),
-                      onTap: () => settings.setUnit(DistanceUnit.kilometers),
-                    ),
-                    ListTile(
-                      title: Text(ol('nm_unit')),
-                      leading: Radio<DistanceUnit>(
-                        value: DistanceUnit.nauticalMiles,
-                        groupValue: settings.unit,
-                        onChanged: (val) => settings.setUnit(val!),
-                      ),
-                      onTap: () => settings.setUnit(DistanceUnit.nauticalMiles),
                     ),
                     const Divider(),
                     SwitchListTile(

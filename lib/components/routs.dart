@@ -19,6 +19,8 @@ const Map<String, List<String>> _translations = {
   'help': ["Aide", "Help", "Ayuda"],
   'warning': ["Attention", "Warning", "Atención"],
   'confirm': ["Confirmer", "Confirm", "Confirmar"],
+  'continue': ["Continuer", "Continue", "Continuar"],
+  'error': ["Erreur", "Error", "Error"],
 
   // Map Screen
   'tracking': ["Suivi en cours", "Tracking", "Seguimiento"],
@@ -151,6 +153,9 @@ const Map<String, List<String>> _translations = {
   'oaci_quota_exceeded': ["Quota API OpenAIP atteint. Les cartes OACI peuvent ne pas se charger.", "OpenAIP quota exceeded. OACI maps may not load.", "Cupo OpenAIP excedido. Los mapas OACI podrían no cargarse."],
   'upgrade_premium': ["Passer au Pack Premium", "Upgrade to Premium", "Pasar al Pack Premium"],
   'restore_purchases': ["Restaurer mes achats", "Restore purchases", "Restaurar mis compras"],
+  'access_activated': ["Accès Activé !", "Access Activated!", "¡Acceso Activado!"],
+  'archive_allowed': ["Vous pouvez maintenant archiver vos traces.", "You can now archive your tracks.", "Ahora puedes archivar tus pistas."],
+  'archive_benefit': ["L'archivage permet de libérer de l'espace tout en conservant vos traces.", "Archiving allows you to free up space while keeping your tracks.", "El archivado permite liberar espacio mientras conservas tus pistas."],
 
   // Drawer
   'manage_destinations': ["Mes Destinations", "Manage Destinations", "Mis Destinos"],
@@ -212,6 +217,9 @@ const Map<String, List<String>> _translations = {
   'sort_date': ["Trier par date", "Sort by date", "Ordenar por fecha"],
   'sort_distance': ["Trier par distance", "Sort by distance", "Ordenar por distancia"],
   'delete_destination_confirm_message': ["Voulez-vous supprimer", "Do you want to delete", "¿Desea eliminar"],
+  'merge_min_selection': ["Veuillez sélectionner au moins deux traces à fusionner.", "Please select at least two tracks to merge.", "Por favor, selecciona al menos dos pistas para fusionar."],
+  'archives_backup_text': ["Sauvegarde des archives Traceo", "Traceo Archives Backup", "Copia de seguridad de archivos Traceo"],
+  'shared_tracks_filename': ["traces_partagees", "shared_tracks", "pistas_compartidas"],
 
   // Simulation
   'simulation_disabled_during_tracking': ["Simulation désactivée pendant le suivi", "Simulation disabled during tracking", "Simulación desactivada durante el seguimiento"],

@@ -33,46 +33,45 @@ class _MapTypeDialogState extends State<MapTypeDialog> {
     return AlertDialog(
       title: Text(ol('map_type')),
       content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              title: Text(ol('normal')),
-              leading: Radio<MapType>(
-                value: MapType.normal,
-                groupValue: _selectedMapType,
-                onChanged: (val) => _handleMapTypeChange(val!),
+        // ignore: deprecated_member_use
+        child: RadioGroup<MapType>(
+          // ignore: deprecated_member_use
+          groupValue: _selectedMapType,
+          // ignore: deprecated_member_use
+          onChanged: (val) => _handleMapTypeChange(val!),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: Text(ol('normal')),
+                leading: const Radio<MapType>(
+                  value: MapType.normal,
+                ),
+                onTap: () => _handleMapTypeChange(MapType.normal),
               ),
-              onTap: () => _handleMapTypeChange(MapType.normal),
-            ),
-            ListTile(
-              title: Text(ol('satellite')),
-              leading: Radio<MapType>(
-                value: MapType.satellite,
-                groupValue: _selectedMapType,
-                onChanged: (val) => _handleMapTypeChange(val!),
+              ListTile(
+                title: Text(ol('satellite')),
+                leading: const Radio<MapType>(
+                  value: MapType.satellite,
+                ),
+                onTap: () => _handleMapTypeChange(MapType.satellite),
               ),
-              onTap: () => _handleMapTypeChange(MapType.satellite),
-            ),
-            ListTile(
-              title: Text(ol('terrain')),
-              leading: Radio<MapType>(
-                value: MapType.terrain,
-                groupValue: _selectedMapType,
-                onChanged: (val) => _handleMapTypeChange(val!),
+              ListTile(
+                title: Text(ol('terrain')),
+                leading: const Radio<MapType>(
+                  value: MapType.terrain,
+                ),
+                onTap: () => _handleMapTypeChange(MapType.terrain),
               ),
-              onTap: () => _handleMapTypeChange(MapType.terrain),
-            ),
-            ListTile(
-              title: Text(ol('hybrid')),
-              leading: Radio<MapType>(
-                value: MapType.hybrid,
-                groupValue: _selectedMapType,
-                onChanged: (val) => _handleMapTypeChange(val!),
+              ListTile(
+                title: Text(ol('hybrid')),
+                leading: const Radio<MapType>(
+                  value: MapType.hybrid,
+                ),
+                onTap: () => _handleMapTypeChange(MapType.hybrid),
               ),
-              onTap: () => _handleMapTypeChange(MapType.hybrid),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [

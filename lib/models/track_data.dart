@@ -66,11 +66,11 @@ class TrackData with ChangeNotifier {
   }
 
   List<String> get getSelectedTracksNames {
-    return _tracks.where((t) => t.isDone).map((t) => t.name).toList();
+    return _tracks.where((t) => t.isDone).toList().map((t) => t.name).toList();
   }
   
   List<String> get getSelectedArchivedTracksNames {
-    return _archivedTracks.where((t) => t.isDone).map((t) => t.name).toList();
+    return _archivedTracks.where((t) => t.isDone).toList().map((t) => t.name).toList();
   }
 
   void toggleDone(int index) {
@@ -106,7 +106,9 @@ class TrackData with ChangeNotifier {
       if (!await archiveDir.exists()) {
         await archiveDir.create();
       }
-    } catch (e) {}
+    } catch (_) {
+      // Ignore error when creating app folder
+    }
   }
 
   Future<void> listTracks() async {
@@ -127,12 +129,16 @@ class TrackData with ChangeNotifier {
               if (lines.length >= 7) {
                 _tracks.add(Track.fromLines(lines));
               }
-            } catch (e) {}
+            } catch (_) {
+              // Ignore corrupted or invalid track files
+            }
           }
         }
         sortTracks();
       }
-    } catch (e) {}
+    } catch (_) {
+      // Ignore directory listing errors
+    }
     isLoading = false;
     notifyListeners();
   }
@@ -151,12 +157,16 @@ class TrackData with ChangeNotifier {
               if (lines.length >= 7) {
                 _archivedTracks.add(Track.fromLines(lines));
               } 
-            } catch (e) {}
+            } catch (_) {
+              // Ignore corrupted or invalid archived track files
+            }
           }
         }
         sortTracks();
       }
-    } catch (e) {}
+    } catch (_) {
+      // Ignore directory listing errors for archives
+    }
     notifyListeners();
   }
 
@@ -191,7 +201,9 @@ class TrackData with ChangeNotifier {
         if (await file.exists()) {
           await file.delete();
         }
-      } catch (e) {}
+      } catch (_) {
+        // Ignore errors during file deletion
+      }
     }
     await listTracks();
   }
@@ -203,7 +215,9 @@ class TrackData with ChangeNotifier {
         if (await file.exists()) {
           await file.delete();
         }
-      } catch (e) {}
+      } catch (_) {
+        // Ignore errors during archived file deletion
+      }
     }
     await listArchivedTracks();
   }
@@ -220,7 +234,9 @@ class TrackData with ChangeNotifier {
       String newContent = lines.join('\n');
       await newFile.writeAsString(newContent);
       await oldFile.delete();
-    } catch (e) {}
+    } catch (_) {
+      // Ignore renaming errors
+    }
     await listTracks();
   }
   
@@ -234,7 +250,9 @@ class TrackData with ChangeNotifier {
            if (!await archiveDir.exists()) await archiveDir.create();
            await sourceFile.rename(destFile.path);
         }
-      } catch(e) {}
+      } catch(_) {
+        // Ignore archival errors for individual tracks
+      }
     }
     await listTracks();
     await listArchivedTracks();
@@ -248,7 +266,9 @@ class TrackData with ChangeNotifier {
         if (await sourceFile.exists()) {
            await sourceFile.rename(destFile.path);
         }
-      } catch(e) {}
+      } catch(_) {
+        // Ignore unarchival errors for individual tracks
+      }
     }
     await listArchivedTracks();
     await listTracks();

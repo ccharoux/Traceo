@@ -57,19 +57,19 @@ class _TracksScreenState extends State<TracksScreen> {
         builder: (context, state, child) {
           if (state.isPremium || state.isPremiumArchives) {
             return AlertDialog(
-              title: const Text("Accès Activé !"),
-              content: const Column(
+              title: Text(ol('access_activated')),
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle, size: 64, color: Colors.green),
-                  SizedBox(height: 16),
-                  Text("Vous pouvez maintenant archiver vos traces."),
+                  const Icon(Icons.check_circle, size: 64, color: Colors.green),
+                  const SizedBox(height: 16),
+                  Text(ol('archive_allowed')),
                 ],
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(true),
-                  child: const Text("Continuer"),
+                  child: Text(ol('continue')),
                 ),
               ],
             );
@@ -84,9 +84,9 @@ class _TracksScreenState extends State<TracksScreen> {
                 const SizedBox(height: 16),
                 Text(ol('premium_desc')),
                 const SizedBox(height: 8),
-                const Text(
-                  "L'archivage permet de libérer de l'espace tout en conservant vos traces.",
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                Text(
+                  ol('archive_benefit'),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -157,15 +157,15 @@ class _TracksScreenState extends State<TracksScreen> {
                         switch (result) {
                           case 'export':
                             final String? fileName = await _displayTextInputDialog(title: ol('export_archives'), initialValue: 'archives');
-                            if (!mounted || fileName == null || fileName.isEmpty) return;
+                            if (!context.mounted || fileName == null || fileName.isEmpty) return;
                             try {
                               final path = await trackDataProvider.exportArchivesToTempFile(fileName: fileName);
-                              if (!mounted) return;
+                              if (!context.mounted) return;
                               final file = File(path);
                               final sizeInBytes = await file.length();
                               final sizeInMb = sizeInBytes / (1024 * 1024);
                               if (sizeInMb > 20) {
-                                  if (!mounted) return;
+                                  if (!context.mounted) return;
                                   final bool? proceed = await showDialog<bool>(
                                   context: context,
                                   builder: (dialogContext) => AlertDialog(
@@ -177,29 +177,29 @@ class _TracksScreenState extends State<TracksScreen> {
                                     ],
                                   ),
                                 );
-                                if (!mounted || proceed != true) return;
+                                if (!context.mounted || proceed != true) return;
                               }
-                              await Share.shareXFiles([XFile(path)], text: 'Traceo Archives Backup');
+                              await Share.shareXFiles([XFile(path)], text: ol('archives_backup_text'));
                             } catch (e) {
-                              if (!mounted) return;
+                              if (!context.mounted) return;
                               messenger.showSnackBar(SnackBar(content: Text("${ol('error_exporting_archives')}: $e")));
                             }
                             break;
                           case 'import':
                             final importResult = await trackDataProvider.importArchives();
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             messenger.showSnackBar(SnackBar(content: Text(importResult)));
                             break;
                           case 'import_shared':
                             final importResult = await trackDataProvider.importSharedTracks();
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             messenger.showSnackBar(SnackBar(content: Text(importResult)));
                             break;
                           case 'unarchive':
                             final listSelected = trackDataProvider.archivedTracks.where((t) => t.isDone).toList();
                             if (listSelected.isEmpty) return;
                             await trackDataProvider.unarchiveTracks(listSelected);
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             messenger.showSnackBar(SnackBar(content: Text(ol('tracks_unarchived_snackbar'))));
                             setState(() {
                               _showArchives = false;
@@ -209,9 +209,9 @@ class _TracksScreenState extends State<TracksScreen> {
                             final listSelected = trackDataProvider.archivedTracks.where((t) => t.isDone).toList();
                             if (listSelected.isEmpty) return;
                             final bool? shouldDelete = await _dialogDelete(listSelected);
-                            if (!mounted || shouldDelete != true) return;
+                            if (!context.mounted || shouldDelete != true) return;
                             await trackDataProvider.deleteArchivedTracks(listSelected.map((t) => t.name).toList());
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             messenger.showSnackBar(SnackBar(content: Text(ol('archives_deleted_snackbar'))));
                             break;
                         }
@@ -293,9 +293,9 @@ class _TracksScreenState extends State<TracksScreen> {
                           final messenger = ScaffoldMessenger.of(context);
                           final trackDataRef = context.read<TrackData>();
                           final bool? shouldDelete = await _dialogDelete(selectedTracks);
-                          if (!mounted || shouldDelete != true) return;
+                          if (!context.mounted || shouldDelete != true) return;
                           await trackDataRef.deleteTracks(selectedTracks.map((t) => t.name).toList());
-                          if (!mounted) return;
+                          if (!context.mounted) return;
                           messenger.showSnackBar(SnackBar(content: Text(ol('tracks_deleted_snackbar'))));
                         },
                       ),
@@ -311,7 +311,7 @@ class _TracksScreenState extends State<TracksScreen> {
                           final trackDataRef = context.read<TrackData>();
                           final messenger = ScaffoldMessenger.of(context);
                           final res = await trackDataRef.importSharedTracks();
-                          if (!mounted) return;
+                          if (!context.mounted) return;
                           messenger.showSnackBar(SnackBar(content: Text(res)));
                         }
                       },
@@ -360,21 +360,21 @@ class _TracksScreenState extends State<TracksScreen> {
                         switch (result) {
                           case 'merge':
                             if (selectedTracks.length < 2) {
-                              messenger.showSnackBar(const SnackBar(content: Text('Please select at least two tracks to merge.')));
+                              messenger.showSnackBar(SnackBar(content: Text(ol('merge_min_selection'))));
                               return;
                             }
                             final String? newName = await _displayTextInputDialog(title: ol('merge_button'));
-                            if (!mounted || newName == null || newName.isEmpty) return;
+                            if (!context.mounted || newName == null || newName.isEmpty) return;
 
                             final bool? deleteSource = await _confirmDeleteSourceDialog();
-                            if (!mounted || deleteSource == null) return;
+                            if (!context.mounted || deleteSource == null) return;
 
                             try {
                               await trackDataRef.mergeTracks(selectedTracks, newName, deleteSource: deleteSource);
-                              if (!mounted) return;
+                              if (!context.mounted) return;
                               messenger.showSnackBar(SnackBar(content: Text('${ol('merge_success_snackbar')} "$newName".')));
                             } catch (e) {
-                              if (!mounted) return;
+                              if (!context.mounted) return;
                               messenger.showSnackBar(SnackBar(content: Text('${ol('merge_failed_snackbar')}: $e')));
                             }
                             break;
@@ -383,18 +383,18 @@ class _TracksScreenState extends State<TracksScreen> {
                             final track = selectedTracks.first;
                             final int index = trackDataRef.tracks.indexOf(track);
                             final String? newName = await _displayTextInputDialog(initialValue: track.name);
-                            if (!mounted || newName == null || newName.isEmpty) return;
+                            if (!context.mounted || newName == null || newName.isEmpty) return;
 
                             await trackDataRef.changeName(newName, index);
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             messenger.showSnackBar(SnackBar(content: Text('${ol('track_renamed_snackbar')} "$newName".')));
                             break;
                           case 'archive':
                             final hasArchiveAccess = await _checkPremiumArchives();
-                            if (!mounted || !hasArchiveAccess || selectedTracks.isEmpty) return;
+                            if (!context.mounted || !hasArchiveAccess || selectedTracks.isEmpty) return;
 
                             await trackDataRef.archiveTracks(selectedTracks);
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             messenger.showSnackBar(SnackBar(content: Text(ol('tracks_archived_snackbar'))));
                             break;
                           case 'sort':
@@ -403,7 +403,7 @@ class _TracksScreenState extends State<TracksScreen> {
                           case 'cut':
                             if (selectedTracks.length != 1) return;
                             final trackName = selectedTracks.first.name;
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             navigator.pushNamed(MapTrack.id, arguments: {'trackName': trackName, 'cutMode': true});
                             break;
                         }
@@ -484,22 +484,22 @@ class _TracksScreenState extends State<TracksScreen> {
       return;
     }
 
-    String initialName = 'shared_tracks';
+    String initialName = ol('shared_tracks_filename');
     if (selectedTracks.length == 1) {
       initialName = selectedTracks.first.name;
     }
 
     final String? fileName = await _displayTextInputDialog(title: ol('share_tracks'), initialValue: initialName);
-    if (!mounted || fileName == null || fileName.isEmpty) return;
+    if (!context.mounted || fileName == null || fileName.isEmpty) return;
 
     try {
       final result = await trackDataProvider.exportTracksToTempFile(selectedTracks, fileName);
-      if (!mounted) return;
+      if (!context.mounted) return;
       
       final file = File(result);
       final sizeInMb = await file.length() / (1024 * 1024);
       if (sizeInMb > 20) {
-        if (!mounted) return;
+        if (!context.mounted) return;
         final bool? proceed = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
@@ -511,17 +511,17 @@ class _TracksScreenState extends State<TracksScreen> {
             ],
           ),
         );
-        if (!mounted || proceed != true) return;
+        if (!context.mounted || proceed != true) return;
       }
 
-      if (!mounted) return;
+      if (!context.mounted) return;
       await Share.shareXFiles(
         [XFile(result)],
         text: ol('share_tracks_text'),
         subject: ol('share_tracks'),
       );
     } catch (e) {
-      if (!mounted) return;
+      if (!context.mounted) return;
       messenger.showSnackBar(SnackBar(content: Text(ol('error_sharing_tracks'))));
     }
   }
@@ -557,7 +557,7 @@ class _TracksScreenState extends State<TracksScreen> {
   }
 
   Future<String?> _displayTextInputDialog({String title = '', String initialValue = ''}) async {
-    if (!mounted) return null;
+    if (!context.mounted) return null;
     final textController = TextEditingController(text: initialValue);
     return showDialog<String>(
       context: context,
@@ -585,7 +585,7 @@ class _TracksScreenState extends State<TracksScreen> {
   }
 
   Future<bool?> _dialogDelete(List<Track> tracks) async {
-    if (!mounted) return null;
+    if (!context.mounted) return null;
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -608,7 +608,7 @@ class _TracksScreenState extends State<TracksScreen> {
   }
 
   Future<bool?> _confirmDeleteSourceDialog() async {
-    if (!mounted) return null;
+    if (!context.mounted) return null;
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {

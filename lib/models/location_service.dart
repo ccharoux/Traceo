@@ -209,7 +209,7 @@ class LocaData with ChangeNotifier {
         p2['lat'], p2['lon'],
       ) * note['ratio'];
 
-      final bearingToNote = Geolocator.bearingBetween(p1['lat'], p1['lon'], p2['lat'], p2['lon']);
+      //final bearingToNote = Geolocator.bearingBetween(p1['lat'], p1['lon'], p2['lat'], p2['lon']);
       
       final noteLat = p1['lat'] + (notePos / 111111) * Geolocator.bearingBetween(0,0,1,0);
       final noteLon = p1['lon'] + (notePos / (111111 * Geolocator.bearingBetween(0,0,0,1))) * Geolocator.bearingBetween(0,0,0,1);
