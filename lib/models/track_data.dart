@@ -23,6 +23,7 @@ class TrackData with ChangeNotifier {
   List<String> _tracksToDisplay = [];
   List<LatLng> _trackCoordinates = [];
   bool isMergingPreview = false;
+  bool isViewingArchives = false;
   String trackNameForDisplay = "";
   MapType mapType = MapType.terrain;
   bool isAviationLayerEnabled = false; // Réactivation de l'option manuelle
@@ -87,8 +88,9 @@ class TrackData with ChangeNotifier {
     }
   }
 
-  void setTracksToDisplay(List<String> trackNames) {
+  void setTracksToDisplay(List<String> trackNames, {bool archived = false}) {
     _tracksToDisplay = trackNames;
+    isViewingArchives = archived;
     if (trackNames.length == 1) {
       trackNameForDisplay = trackNames.first;
       isMergingPreview = false;

@@ -127,7 +127,9 @@ class LocaData with ChangeNotifier {
       newPosition.latitude, newPosition.longitude,
     );
     
-    dureeInt = (dureeInt ?? 0) + timeDiff;
+    // Durée totale : temps écoulé depuis le départ
+    dureeInt = newPosition.timestamp.difference(trace.first.timestamp).inSeconds;
+    
     bool isMoving = distance > 2.0 && newPosition.speed * 3.6 > 0.5;
 
     if (isMoving) { 

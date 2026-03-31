@@ -33,25 +33,32 @@ class _PickOnMapScreenState extends State<PickOnMapScreen> {
   }
 
   Future<void> _fetchInitialPosition() async {
+    LatLng? pos;
     try {
-      const locationSettings =
-          LocationSettings(accuracy: LocationAccuracy.high);
-      Position position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings);
-      if (mounted) {
-        setState(() {
-          _initialPosition = LatLng(position.latitude, position.longitude);
-        });
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+        final position = await Geolocator.getCurrentPosition().timeout(
+          const Duration(seconds: 2),
+          onTimeout: () async => (await Geolocator.getLastKnownPosition()) ?? Position(
+            latitude: 45.75, longitude: 4.85, timestamp: DateTime.now(),
+            accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0,
+          ),
+        );
+        pos = LatLng(position.latitude, position.longitude);
+      } else {
+        final position = await Geolocator.getLastKnownPosition();
+        if (position != null) {
+          pos = LatLng(position.latitude, position.longitude);
+        }
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _initialPosition = const LatLng(45.75, 4.85);
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(ol("gps_error"))),
-        );
-      }
+      debugPrint("Error fetching position: $e");
+    }
+
+    if (mounted) {
+      setState(() {
+        _initialPosition = pos ?? const LatLng(45.75, 4.85); // Lyon par défaut
+      });
     }
   }
 

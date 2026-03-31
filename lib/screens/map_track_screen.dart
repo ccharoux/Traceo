@@ -103,8 +103,9 @@ class _MapTrackState extends State<MapTrack> {
     if (arguments != null) {
       final trackName = arguments['trackName'] as String?;
       final cutMode = arguments['cutMode'] as bool? ?? false;
+      final archived = arguments['archived'] as bool? ?? false;
       if (trackName != null) {
-        context.read<TrackData>().setTracksToDisplay([trackName]);
+        context.read<TrackData>().setTracksToDisplay([trackName], archived: archived);
         if (cutMode) setState(() => _isCutMode = true);
       }
     }
@@ -142,6 +143,8 @@ class _MapTrackState extends State<MapTrack> {
 
   void _showNoteEditDialog(String trackName, int lineIndex, String currentNoteText, {int? pauseDuration, String? vignetteBase64}) {
     if (!mounted) return;
+    final trackData = context.read<TrackData>();
+    final isArchived = trackData.isViewingArchives;
     final noteController = TextEditingController(text: currentNoteText);
     Uint8List? vignetteBytes;
     if (vignetteBase64 != null) {
@@ -189,10 +192,11 @@ class _MapTrackState extends State<MapTrack> {
               TextField(
                 controller: noteController,
                 maxLines: null, 
+                readOnly: isArchived,
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   hintText: ol('note_hint'),
-                  border: const UnderlineInputBorder(),
+                  border: isArchived ? InputBorder.none : const UnderlineInputBorder(),
                   contentPadding: const EdgeInsets.fromLTRB(0, 10, 0, 30), 
                 ),
               ),
@@ -202,15 +206,16 @@ class _MapTrackState extends State<MapTrack> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: () async {
-                    if (!dialogContext.mounted) return;
-                    await context.read<TrackData>().deleteNoteAndPhotoFromTrack(trackName, lineIndex);
-                    if (mounted) setState(() {});
-                    if (dialogContext.mounted) Navigator.of(dialogContext).pop();
-                  },
-                  child: Text(ol('delete'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                ),
+                if (!isArchived)
+                  TextButton(
+                    onPressed: () async {
+                      if (!dialogContext.mounted) return;
+                      await context.read<TrackData>().deleteNoteAndPhotoFromTrack(trackName, lineIndex);
+                      if (mounted) setState(() {});
+                      if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+                    },
+                    child: Text(ol('delete'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  ),
                 const Spacer(),
                 if (pauseDuration != null)
                   Padding(
@@ -221,10 +226,12 @@ class _MapTrackState extends State<MapTrack> {
                   child: Text(ol('ok'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   onPressed: () async {
                     if (!dialogContext.mounted) return;
-                    final newNote = noteController.text;
-                    if (newNote != currentNoteText) {
-                      await context.read<TrackData>().updateNote(trackName, lineIndex, newNote);
-                      if (mounted) setState(() {});
+                    if (!isArchived) {
+                      final newNote = noteController.text;
+                      if (newNote != currentNoteText) {
+                        await context.read<TrackData>().updateNote(trackName, lineIndex, newNote);
+                        if (mounted) setState(() {});
+                      }
                     }
                     if (dialogContext.mounted) Navigator.of(dialogContext).pop();
                   },
@@ -324,13 +331,16 @@ class _MapTrackState extends State<MapTrack> {
   Future<Map<String, dynamic>> _loadTracksData(TrackData trackData, SettingsState settings) async {
     _colorIndex = 0;
     final trackNames = trackData.tracksToDisplay;
+    final isArchived = trackData.isViewingArchives;
+    final basePath = isArchived ? trackData.archivePath : trackData.trackPath;
+    
     Set<Polyline> polylines = {};
     Set<Marker> markers = {};
     List<LatLng> allCoordinates = [];
     final timeFormat = DateFormat('HH:mm');
 
     for (String trackName in trackNames) {
-      final file = File('${trackData.trackPath}/$trackName.txt');
+      final file = File('$basePath/$trackName.txt');
       if (!await file.exists()) continue;
       final lines = await file.readAsLines();
       if (lines.length < 8) continue;
@@ -434,6 +444,7 @@ class _MapTrackState extends State<MapTrack> {
 
   Widget _buildMapScaffold({required TrackData trackData, required Set<Polyline> polylines, required Set<Marker> markers, required LatLngBounds bounds}) {
     final bool isSingleTrack = trackData.tracksToDisplay.length == 1;
+    final isArchived = trackData.isViewingArchives;
     final center = LatLng(
       (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
       (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
@@ -444,7 +455,7 @@ class _MapTrackState extends State<MapTrack> {
         backgroundColor: Colors.brown, foregroundColor: Colors.white,
         title: Text(isSingleTrack ? trackData.tracksToDisplay.first : ol('group_view_title'), style: const TextStyle(fontSize: 16)),
         actions: [
-          if (isSingleTrack) IconButton(icon: Icon(_isPhotoPickMode ? Icons.close : Icons.add_a_photo), onPressed: () {
+          if (isSingleTrack && !isArchived) IconButton(icon: Icon(_isPhotoPickMode ? Icons.close : Icons.add_a_photo), onPressed: () {
             setState(() => _isPhotoPickMode = !_isPhotoPickMode);
             if (_isPhotoPickMode) {
               if (!mounted) return;
@@ -464,9 +475,9 @@ class _MapTrackState extends State<MapTrack> {
           initialCameraPosition: CameraPosition(target: center, zoom: 12),
           mapType: trackData.mapType, markers: markers, polylines: polylines,
           onTap: (point) {
-            if (_isPhotoPickMode) {
+            if (_isPhotoPickMode && !isArchived) {
               _handleTakePhoto(point);
-            } else if (_isCutMode) {
+            } else if (_isCutMode && !isArchived) {
               if (!mounted) return;
               final scaffoldMessenger = ScaffoldMessenger.of(context);
               final navigator = Navigator.of(context);

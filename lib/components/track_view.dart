@@ -48,7 +48,7 @@ class TrackView extends StatelessWidget {
               track: track,
               onTap: () {
                 if (isSelectionMode) {
-                  Navigator.of(context).pop(track.name);
+                  Navigator.of(context).pop({'name': track.name, 'archived': isArchiveView});
                 } else {
                   if (isArchiveView) {
                     trackData.toggleArchiveDone(index);

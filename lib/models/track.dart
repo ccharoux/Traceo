@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 
 class Track {
   String name;
@@ -43,12 +44,25 @@ class Track {
       }
     }
 
+    final startStr = lines[2];
+    final endStr = lines[3];
+    int duree = int.tryParse(lines[4]) ?? 0;
+
+    try {
+      final DateFormat df = DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR');
+      final DateTime startDate = df.parse(startStr);
+      final DateTime endDate = df.parse(endStr);
+      duree = endDate.difference(startDate).inSeconds;
+    } catch (_) {
+      // On garde la durée du fichier si le parsing échoue (ex: format différent)
+    }
+
     return Track(
       name: lines[0],
       bounds: lines[1],
-      start: lines[2],
-      end: lines[3],
-      duree: int.tryParse(lines[4]) ?? 0,
+      start: startStr,
+      end: endStr,
+      duree: duree,
       moving: int.tryParse(lines[5]) ?? 0,
       distance: double.tryParse(lines[6]) ?? 0.0,
       vignetteBase64: foundVignette,

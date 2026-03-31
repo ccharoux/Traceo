@@ -114,6 +114,7 @@ class _TracksScreenState extends State<TracksScreen> {
   Widget build(BuildContext context) {
     final trackData = context.watch<TrackData>();
     final selectedTracks = trackData.tracks.where((t) => t.isDone).toList();
+    final selectedArchivedTracks = trackData.archivedTracks.where((t) => t.isDone).toList();
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -137,6 +138,35 @@ class _TracksScreenState extends State<TracksScreen> {
             ? []
             : _showArchives
                 ? [
+                    if (selectedArchivedTracks.isNotEmpty) ...[
+                      IconButton(
+                        icon: const Icon(Icons.remove_red_eye, color: Colors.white),
+                        tooltip: ol('view_button'),
+                        onPressed: () {
+                          if (!mounted) return;
+                          final trackDataProvider = context.read<TrackData>();
+                          final selectedTrackNames = trackDataProvider.getSelectedArchivedTracksNames;
+                          if (selectedTrackNames.isNotEmpty) {
+                            trackDataProvider.setTracksToDisplay(selectedTrackNames, archived: true);
+                            Navigator.of(context).pushNamed(MapTrack.id, arguments: {'archived': true});
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.white),
+                        tooltip: ol('delete_button'),
+                        onPressed: () async {
+                          if (selectedArchivedTracks.isEmpty) return;
+                          final messenger = ScaffoldMessenger.of(context);
+                          final trackDataRef = context.read<TrackData>();
+                          final bool? shouldDelete = await _dialogDelete(selectedArchivedTracks);
+                          if (!context.mounted || shouldDelete != true) return;
+                          await trackDataRef.deleteArchivedTracks(selectedArchivedTracks.map((t) => t.name).toList());
+                          if (!context.mounted) return;
+                          messenger.showSnackBar(SnackBar(content: Text(ol('archives_deleted_snackbar'))));
+                        },
+                      ),
+                    ],
                     IconButton(
                       icon: const Icon(Icons.list, color: Colors.white),
                       tooltip: ol('tracks_title'),

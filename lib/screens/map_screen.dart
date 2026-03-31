@@ -518,12 +518,13 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     finally { if (mounted) { _resetAllActivities(); setState(() => _isSaving = false); } }
   }
 
-  Future<void> _startSimulation(String trackName) async {
+  Future<void> _startSimulation(String trackName, {bool archived = false}) async {
     final locaData = context.read<LocaData>();
     final trackData = context.read<TrackData>();
     final messenger = ScaffoldMessenger.of(context);
     if (locaData.isTracking) _resetAllActivities();
-    final file = File(p.join(trackData.trackPath, '$trackName.txt'));
+    final String basePath = archived ? trackData.archivePath : trackData.trackPath;
+    final file = File(p.join(basePath, '$trackName.txt'));
     if (!await file.exists()) return;
     final lines = await file.readAsLines();
     if (!mounted) return;
@@ -867,7 +868,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     ]);
   }
 
-  void _handleSimulate() async { final n = Navigator.of(context); if (context.read<LocaData>().isTracking) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('simulation_disabled_during_tracking')))); return; } n.pop(); final tn = await n.pushNamed(TracksScreen.id, arguments: true); if (tn is String && tn.isNotEmpty) _startSimulation(tn); }
+  void _handleSimulate() async { final n = Navigator.of(context); if (context.read<LocaData>().isTracking) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('simulation_disabled_during_tracking')))); return; } n.pop(); final result = await n.pushNamed(TracksScreen.id, arguments: true); if (result is Map && result['name'] is String) _startSimulation(result['name'], archived: result['archived'] ?? false); }
   Future<void> _handleTakePhoto() async { final ImagePicker pkr = ImagePicker(); final ld = context.read<LocaData>(); final XFile? photo = await pkr.pickImage(source: ImageSource.camera, maxWidth: 400, imageQuality: 60); if (photo != null && mounted) { final bytes = await photo.readAsBytes(); if (!mounted) return; final base64V = base64Encode(bytes); if (_currentPosition == null) return; final actualPos = ld.addPhotoAtPosition(_currentPosition!, base64V); _addNoteMarker(actualPos, '', photoVignette: base64V); _showNoteEditDialog(actualPos, '', null, base64V); } }
   void _handleAddNote() async { final ld = context.read<LocaData>(); if (_currentPosition == null) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('no_position_available')))); return; } _positionStream?.pause(); final actualPos = ld.addNoteAtPosition(_currentPosition!, ''); _addNoteMarker(actualPos, ''); _showNoteEditDialog(actualPos, '', null, null); _positionStream?.resume(); }
 }
