@@ -36,14 +36,18 @@ android {
 
     defaultConfig {
         applicationId = "com.ccharoux.traceo"
-        minSdk = flutter.minSdkVersion
+        // Force le support d'Android 7.0 (API 24) au minimum
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         
         // On récupère les valeurs depuis pubspec.yaml via l'objet flutter
         versionCode = flutter.versionCode
-        // ON FORCE LE FORMAT : 1.0.0(17) pour le système
+
         versionName = "${flutter.versionName}(${flutter.versionCode})"
 
+        ndk {
+            abiFilters.addAll(listOf("arm64-v8a", "x86_64")) // On retire armeabi-v7a et x86 (32 bits) si on veut être sûr
+        }
         // Transmet la clé API de local.properties au Manifest
         manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
     }

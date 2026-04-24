@@ -319,12 +319,14 @@ class TrackData with ChangeNotifier {
       final lines = await originalFile.readAsLines();
       if (lines.length < 8) return ol('invalid_track_format');
 
-      List<String> points = lines.sublist(7);
+      // Filtrer les lignes vides pour éviter les RangeError
+      List<String> points = lines.sublist(7).where((l) => l.trim().isNotEmpty).toList();
       int closestPointIndex = -1;
       double minDistance = double.infinity;
 
       for (int i = 0; i < points.length; i++) {
-        final parts = points[i].trim().split(' ');
+        final parts = points[i].trim().split(RegExp(r'\s+'));
+        if (parts.length < 2) continue;
         final lat = double.tryParse(parts[0]);
         final lng = double.tryParse(parts[1]);
         if (lat != null && lng != null) {
@@ -352,7 +354,7 @@ class TrackData with ChangeNotifier {
     int totalPauseDuration = 0;
 
     for (var p in points) {
-      final parts = p.trim().split(' ');
+      final parts = p.trim().split(RegExp(r'\s+'));
       if (parts.length >= 2) {
         final lat = double.tryParse(parts[0]);
         final lng = double.tryParse(parts[1]);
@@ -370,9 +372,12 @@ class TrackData with ChangeNotifier {
     final String boundsData = '${bounds.southwest.latitude} ${bounds.southwest.longitude} ${bounds.northeast.latitude} ${bounds.northeast.longitude}';
     timestamps.sort();
     var dateFormat = DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR');
-    final String startTime = timestamps.isNotEmpty ? dateFormat.format(timestamps.first) : "";
-    final String endTime = timestamps.isNotEmpty ? dateFormat.format(timestamps.last) : "";
+    
+    // Sécurisation de l'accès aux timestamps
+    final String startTime = timestamps.isNotEmpty ? dateFormat.format(timestamps.first) : "Inconnue";
+    final String endTime = timestamps.isNotEmpty ? dateFormat.format(timestamps.last) : "Inconnue";
     int totalDuration = timestamps.isNotEmpty ? timestamps.last.difference(timestamps.first).inSeconds : 0;
+    
     int movingTime = max(0, totalDuration - totalPauseDuration);
     double totalDist = 0.0;
     for (int i = 0; i < latLngs.length - 1; i++) { totalDist += _calculateDistance(latLngs[i].latitude, latLngs[i].longitude, latLngs[i+1].latitude, latLngs[i+1].longitude); }

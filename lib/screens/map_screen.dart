@@ -13,6 +13,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../screens/stats_screen.dart';
 import '../components/drawer.dart';
@@ -560,7 +561,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     await _resetMapState(trackName, simulatedPositions.first);
     if (!mounted) return;
     
-    // On passe le flag isFlight à locaData pour qu'il soit partagé correctement
+    // On passe le flag isFlight à locaData pour qu'it soit partagé correctement
     locaData.setSimulationData(simulatedPositions, isFlight: isFlight);
     _resumeSimulation();
   }
@@ -662,7 +663,26 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
     }); 
   }
 
-  void _addNoteMarker(Position pos, String note, {int? pauseDuration, String? photoVignette}) { final icon = photoVignette != null ? _photoIcon : _noteIcon; if (icon == null) return; final String key = pos.timestamp.toLocal().toIso8601String().split('.')[0]; setState(() { _markers.removeWhere((m) { if (m.markerId.value.startsWith('pause_')) { double d = Geolocator.distanceBetween(pos.latitude, pos.longitude, m.position.latitude, m.position.longitude); return d < 25.0 || m.markerId.value == 'pause_$key'; } return false; }); _markers.add(Marker(markerId: MarkerId('${photoVignette != null ? "photo" : "note"}_$key'), position: LatLng(pos.latitude, pos.longitude), icon: icon, onTap: () => _showNoteEditDialog(pos, note, pauseDuration, photoVignette))); }); }
+  void _addNoteMarker(Position pos, String note, {int? pauseDuration, String? photoVignette}) {
+    final icon = photoVignette != null ? _photoIcon : _noteIcon;
+    if (icon == null) return;
+    final String key = pos.timestamp.toLocal().toIso8601String().split('.')[0];
+    setState(() {
+      _markers.removeWhere((m) {
+        if (m.markerId.value.startsWith('pause_')) {
+          double d = Geolocator.distanceBetween(pos.latitude, pos.longitude, m.position.latitude, m.position.longitude);
+          return d < 25.0 || m.markerId.value == 'pause_$key';
+        }
+        return false;
+      });
+      _markers.add(Marker(
+        markerId: MarkerId('${photoVignette != null ? "photo" : "note"}_$key'),
+        position: LatLng(pos.latitude, pos.longitude),
+        icon: icon,
+        onTap: () => _showNoteEditDialog(pos, note, pauseDuration, photoVignette)
+      ));
+    });
+  }
   void _addPauseMarker(Position pos, int dur) { if (_pauseIcon == null) return; final String key = pos.timestamp.toLocal().toIso8601String().split('.')[0]; if (_markers.any((m) { if (m.markerId.value.startsWith('note_') || m.markerId.value.startsWith('photo_')) { double d = Geolocator.distanceBetween(pos.latitude, pos.longitude, m.position.latitude, m.position.longitude); return d < 25.0; } return false; })) return; final int m = dur ~/ 60, s = dur % 60; setState(() { _markers.add(Marker(markerId: MarkerId('pause_$key'), position: LatLng(pos.latitude, pos.longitude), icon: _pauseIcon!, infoWindow: InfoWindow(title: ol('stop'), snippet: '${m.toString().padLeft(2, '0')}m${s.toString().padLeft(2, '0')}s'))); }); }
   Future<BitmapDescriptor> _createCustomMarker(IconData iconData, Color color) async { final ui.PictureRecorder pictureRecorder = ui.PictureRecorder(); final Canvas canvas = Canvas(pictureRecorder); const double size = 45.0, radius = size / 2; canvas.drawCircle(const Offset(radius, radius + 1), radius - 2, Paint()..color = Colors.black.withValues(alpha: 50/255)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2)); canvas.drawCircle(const Offset(radius, radius), radius - 2, Paint()..color = Colors.white); canvas.drawCircle(const Offset(radius, radius), radius - 4, Paint()..color = color); final TextPainter textPainter = TextPainter(textDirection: ui.TextDirection.ltr)..text = TextSpan(text: String.fromCharCode(iconData.codePoint), style: TextStyle(fontSize: size * 0.5, fontFamily: iconData.fontFamily, package: iconData.fontPackage, color: Colors.white)); textPainter.layout(); textPainter.paint(canvas, Offset(radius - textPainter.width / 2, radius - textPainter.height / 2)); final ui.Image image = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt()); final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png); if (byteData == null) return BitmapDescriptor.defaultMarker; return BitmapDescriptor.bytes(byteData.buffer.asUint8List()); }
   void _handleNamePosition() async { final n = Navigator.of(context); final hs = context.read<HomeService>(); n.pop(); final homeName = await _asyncInputDialog(context, ol('name_current_position'), ol('enter_destination_name_hint')); if (homeName == null || homeName.isEmpty || _currentPosition == null) return; await hs.addHome(Home(name: homeName, latitude: _currentPosition!.latitude, longitude: _currentPosition!.longitude)); if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("'$homeName' ${ol('home_saved')}"))); }
@@ -674,6 +694,17 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   String makeTrackSync({required LocaData ld, required String tn}) { final d = ld.travelledLengthDble / 1000.0, b = HandleBounds.fromPoints(ld.trace.map((p) => LatLng(p.latitude, p.longitude)).toList()); final df = DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR'); final isFlight = ld.activeTarget?.isAerodrome == true; final StringBuffer buffer = StringBuffer(); buffer.writeln(tn); buffer.writeln('${b.southwest.latitude} ${b.southwest.longitude} ${b.northeast.latitude} ${b.northeast.longitude}'); buffer.writeln(df.format(ld.trace.first.timestamp.toLocal())); buffer.writeln(df.format(ld.trace.last.timestamp.toLocal())); buffer.writeln('${ld.dureeInt ?? 0}'); buffer.writeln('${ld.walkingTime}'); buffer.writeln('$d'); buffer.writeln('isFlight:$isFlight'); for (var p in ld.trace) { final String k = p.timestamp.toLocal().toIso8601String().split('.')[0]; buffer.write('${p.latitude.toStringAsFixed(6)} ${p.longitude.toStringAsFixed(6)} ${p.altitude.toInt()} $k'); if (ld.notes.containsKey(k)) buffer.write(' ${Uri.encodeComponent(ld.notes[k]!)}'); if (ld.photos.containsKey(k)) buffer.write(' vignette:${ld.photos[k]}'); if (ld.pauses.containsKey(k)) buffer.write(' pause:${ld.pauses[k]}'); buffer.writeln(); } return buffer.toString(); }
   Future<String> makeTrack(LocaData ld, String tn) async { final d = ld.travelledLengthDble / 1000.0, b = HandleBounds.fromPoints(ld.trace.map((p) => LatLng(p.latitude, p.longitude)).toList()); final df = DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR'); final isFlight = ld.activeTarget?.isAerodrome == true; final StringBuffer buffer = StringBuffer(); buffer.writeln(tn); buffer.writeln('${b.southwest.latitude} ${b.southwest.longitude} ${b.northeast.latitude} ${b.northeast.longitude}'); buffer.writeln(df.format(ld.trace.first.timestamp.toLocal())); buffer.writeln(df.format(ld.trace.last.timestamp.toLocal())); buffer.writeln('${ld.dureeInt ?? 0}'); buffer.writeln('${ld.walkingTime}'); buffer.writeln('$d'); buffer.writeln('isFlight:$isFlight'); for (var p in ld.trace) { final String k = p.timestamp.toLocal().toIso8601String().split('.')[0]; buffer.write('${p.latitude.toStringAsFixed(6)} ${p.longitude.toStringAsFixed(6)} ${p.altitude.toInt()} $k'); if (ld.notes.containsKey(k)) buffer.write(' ${Uri.encodeComponent(ld.notes[k]!)}'); if (ld.photos.containsKey(k)) buffer.write(' vignette:${ld.photos[k]}'); if (ld.pauses.containsKey(k)) buffer.write(' pause:${ld.pauses[k]}'); buffer.writeln(); } return buffer.toString(); }
   Future<void> _resetMapState(String? trackName, Position startPosition) async { final ld = context.read<LocaData>(); setState(() { _polylines.clear(); _markers.clear(); if (ld.activeTarget == null) { ld.updateActiveTarget(Home(name: ol('start_point'), latitude: startPosition.latitude, longitude: startPosition.longitude), startPosition); _addOrUpdateHomeMarker(ld.activeTarget!); } }); }
+
+  void _shareCurrentLocation() {
+    if (_currentPosition == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(ol('no_position_available'))),
+      );
+      return;
+    }
+    final String url = 'https://www.google.com/maps/search/?api=1&query=${_currentPosition!.latitude},${_currentPosition!.longitude}';
+    Share.share("${ol('here_is_my_location')}\n$url");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -796,7 +827,11 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
           IconButton( icon: const Icon(Icons.undo), tooltip: ol('undo_last_change'), onPressed: _pointsHistory.isEmpty ? null : _undoRouteAction, ),
         ],
         if (isSimulatingOrPaused) IconButton(icon: Icon(_simulationState == SimulationState.running ? Icons.pause : Icons.play_arrow), tooltip: ol(_simulationState == SimulationState.running ? 'pause' : 'start_simulation'), onPressed: () { if(_simulationState == SimulationState.running) { _pauseSimulation(); } else { _resumeSimulation(); } }),
-        if (isTracking) ...[IconButton(icon: const Icon(Icons.camera_alt), onPressed: _handleTakePhoto, tooltip: ol('take_photo')), IconButton(icon: const Icon(Icons.note_add), onPressed: _handleAddNote, tooltip: ol('add_note'))],
+        if (isTracking) ...[
+          IconButton(icon: const Icon(Icons.share_location), onPressed: _shareCurrentLocation, tooltip: ol('share_location')),
+          IconButton(icon: const Icon(Icons.camera_alt), onPressed: _handleTakePhoto, tooltip: ol('take_photo')), 
+          IconButton(icon: const Icon(Icons.note_add), onPressed: _handleAddNote, tooltip: ol('add_note'))
+        ],
         if (isPremium) IconButton(icon: const Icon(Icons.storage), tooltip: ol('oaci_cache'), onPressed: _showCacheInfo),
         IconButton(icon: const Icon(Icons.map), onPressed: () => showDialog(context: context, builder: (c) => MapTypeDialog(trackData: context.read<TrackData>())), tooltip: ol('map_type_tooltip')),
         IconButton(icon: const Icon(Icons.list_alt), tooltip: ol('tracks_title'), onPressed: () => Navigator.pushNamed(context, TracksScreen.id)),
@@ -876,7 +911,33 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
 class _OpenAIPTileProvider implements TileProvider {
   static String? _cacheDirPath; static Completer<void>? _initCompleter; final VoidCallback? onQuotaExceeded; bool _hasNotifiedQuota = false;
   _OpenAIPTileProvider({this.onQuotaExceeded});
-  static Future<Map<String, dynamic>> getCacheInfo() async { if (_cacheDirPath == null) { try { final cacheDir = await getTemporaryDirectory(); _cacheDirPath = p.join(cacheDir.path, 'oaci_cache'); } catch (_) { return {'count': 0, 'size': 0.0}; } } final dir = Directory(_cacheDirPath!); if (!await dir.exists()) return {'count': 0, 'size': 0.0}; int count = 0; int totalSize = 0; try { final List<FileSystemEntity> files = dir.listSync(); for (var file in files) { if (file is File && file.path.endsWith('.png')) { count++; totalSize += await file.length(); } } } catch (e) { debugPrint("OACI_CACHE: Erreur calcul info: $e"); } return {'count': count, 'size': totalSize / (1024 * 1024)}; }
+  static Future<Map<String, dynamic>> getCacheInfo() async { 
+    if (_cacheDirPath == null) { 
+      try { 
+        final cacheDir = await getTemporaryDirectory(); 
+        _cacheDirPath = p.join(cacheDir.path, 'oaci_cache'); 
+      } catch (_) { 
+        return {'count': 0, 'size': 0.0}; 
+      } 
+    } 
+    final dir = Directory(_cacheDirPath!); 
+    int count = 0; 
+    int totalSize = 0; 
+    if (await dir.exists()) {
+      try { 
+        final List<FileSystemEntity> files = dir.listSync(); 
+        for (var file in files) { 
+          if (file is File && file.path.endsWith('.png')) { 
+            count++; 
+            totalSize += await file.length(); 
+          } 
+        } 
+      } catch (e) { 
+        debugPrint("OACI_CACHE: Erreur calcul info: $e"); 
+      } 
+    }
+    return {'count': count, 'size': totalSize / (1024 * 1024)}; 
+  }
   static Future<void> clearCache() async { if (_cacheDirPath == null) return; final dir = Directory(_cacheDirPath!); if (await dir.exists()) { try { final List<FileSystemEntity> files = dir.listSync(); for (var file in files) { if (file is File) await file.delete(); } } catch (e) { debugPrint("OACI_CACHE: Erreur suppression cache: $e"); } } }
   Future<void> _ensureCacheDir() async { if (_cacheDirPath != null) return; if (_initCompleter != null) return _initCompleter!.future; _initCompleter = Completer<void>(); try { final cacheDir = await getTemporaryDirectory(); _cacheDirPath = p.join(cacheDir.path, 'oaci_cache'); final dir = Directory(_cacheDirPath!); if (!await dir.exists()) await dir.create(recursive: true); _initCompleter!.complete(); } catch (e) { _initCompleter!.completeError(e); _initCompleter = null; } }
   @override Future<Tile> getTile(int x, int y, int? zoom) async { if (zoom == null) return TileProvider.noTile; try { await _ensureCacheDir(); } catch (_) { return _getRemoteTile(x, y, zoom); } final String fileName = 'tile_${zoom}_${x}_$y.png'; File? localFile; if (_cacheDirPath != null) { localFile = File(p.join(_cacheDirPath!, fileName)); try { if (await localFile.exists()) { final Uint8List bytes = await localFile.readAsBytes(); if (bytes.isNotEmpty) return Tile(256, 256, bytes); } } catch (e) { debugPrint("OACI_CACHE: Erreur lecture $fileName: $e"); } } return _getRemoteTile(x, y, zoom, localFile: localFile); }

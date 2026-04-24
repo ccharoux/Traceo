@@ -106,7 +106,19 @@ class _MapTrackState extends State<MapTrack> {
       final archived = arguments['archived'] as bool? ?? false;
       if (trackName != null) {
         context.read<TrackData>().setTracksToDisplay([trackName], archived: archived);
-        if (cutMode) setState(() => _isCutMode = true);
+        if (cutMode && !_isCutMode) {
+          setState(() => _isCutMode = true);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(ol('cut_instruction_snackbar')),
+                  duration: const Duration(seconds: 5),
+                ),
+              );
+            }
+          });
+        }
       }
     }
   }
