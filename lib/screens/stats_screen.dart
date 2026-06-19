@@ -235,8 +235,8 @@ class StatsScreen extends StatelessWidget {
                     firstElem: ol('duration'),
                     secondElem: ol('moving'),
                     thirdElem:
-                        affTime((locaData.dureeInt ?? 0).toString(), true),
-                    fourthElem: affTime(walkingTime, true),
+                        affTime((locaData.dureeInt ?? 0).toString()),
+                    fourthElem: affTime(walkingTime),
                     colour: Colors.brown,
                     fontSize: 20,
                   ),

@@ -232,7 +232,7 @@ class _MapTrackState extends State<MapTrack> {
                 if (pauseDuration != null)
                   Padding(
                     padding: const EdgeInsets.only(right: 10.0),
-                    child: Text(affTime(pauseDuration.toString(), true), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 14)),
+                    child: Text(affTime(pauseDuration.toString()), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 14)),
                   ),
                 TextButton(
                   child: Text(ol('ok'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -384,7 +384,7 @@ class _MapTrackState extends State<MapTrack> {
                   markerId: MarkerId('pause_${i}_$trackName'),
                   position: latLng,
                   icon: _pauseIcon ?? BitmapDescriptor.defaultMarker,
-                  infoWindow: InfoWindow(title: ol('stop'), snippet: affTime(diffSeconds.toString(), true)),
+                  infoWindow: InfoWindow(title: ol('stop'), snippet: affTime(diffSeconds.toString())),
                 ));
               }
             }

@@ -48,16 +48,16 @@ class TrackTile extends StatelessWidget {
                 ),
                 child: vignetteBytes != null
                     ? ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.memory(
-                          vignetteBytes,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.broken_image, color: Colors.grey),
-                        ),
-                      )
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.memory(
+                    vignetteBytes,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.broken_image, color: Colors.grey),
+                  ),
+                )
                     : const Icon(Icons.map_outlined, color: Colors.grey, size: 40),
               ),
               const SizedBox(width: 15),
@@ -89,29 +89,38 @@ class TrackTile extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
+                    // Ligne Distance et Temps de marche
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.straighten, size: 13, color: Colors.grey),
-                        const SizedBox(width: 5),
-                        Text(
-                          '${track.distance.toStringAsFixed(2)} km',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blueGrey,
-                            fontSize: 13,
-                          ),
+                        Row(
+                          children: [
+                            const Icon(Icons.straighten, size: 13, color: Colors.grey),
+                            const SizedBox(width: 5),
+                            Text(
+                              '${track.distance.toStringAsFixed(2)} km',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blueGrey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 15),
-                        const Icon(Icons.access_time, size: 13, color: Colors.grey),
-                        const SizedBox(width: 5),
-                        Text(
-                          affTime(track.duree.toString(), false),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blueGrey,
-                            fontSize: 13,
-                          ),
+                        Row(
+                          children: [
+                            const Icon(Icons.directions_walk, size: 14, color: Colors.blueGrey),
+                            const SizedBox(width: 4),
+                            Text(
+                              affTime(track.moving.toString(),false),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

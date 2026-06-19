@@ -320,15 +320,25 @@ String affKms(double meters) {
   return "${(meters / 1000).toStringAsFixed(2)} km";
 }
 
-String affTime(String timeInSeconds, bool showSeconds) {
+String affTime(String timeInSeconds, [bool showSeconds = true]) {
   int seconds = int.tryParse(timeInSeconds) ?? 0;
+
   int h = seconds ~/ 3600;
   int m = (seconds % 3600) ~/ 60;
   int s = seconds % 60;
-  if (h > 0) return "${h}h ${m}m${showSeconds ? " ${s}s" : ""}";
-  if (m > 0) return "${m}m${showSeconds ? " ${s}s" : ""}";
-  return "${s}s";
+
+  if (showSeconds) {
+    if (h > 0) return "${h}h ${m}m ${s}s";
+    if (m > 0) return "${m}m ${s}s";
+    return "${s}s";
+  } else {
+    // Version courte pour les étiquettes (tuiles)
+    if (h > 0) return "${h}h ${m}m";
+    if (m > 0) return "${m}m";
+    return "${s}s";
+  }
 }
+
 
 Future<String> formatTrackName(DateTime time) async {
   return DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR').format(time);
