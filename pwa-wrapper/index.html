@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="View">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+
+  <link rel="manifest" href="manifest.json">
+  <title>View</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #0b1220;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .splash { text-align: center; color: #fff; }
+    .splash img { width: 96px; height: 96px; border-radius: 20px; }
+    .splash p { margin-top: 16px; font-size: 14px; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div class="splash">
+    <img src="icons/Icon-192.png" alt="View">
+    <p>Ouverture...</p>
+  </div>
+
+  <script>
+    var TARGET_URL = "https://ccb.familyds.com:8443/portailCha/";
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').catch(function () {});
+    }
+
+    window.location.replace(TARGET_URL);
+  </script>
+</body>
+</html>
