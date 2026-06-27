@@ -39,14 +39,25 @@
     <p>Ouverture...</p>
   </div>
 
-  <script>
+ <script>
     var TARGET_URL = "https://ccb.familyds.com:8443/portailCha/";
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js').catch(function () {});
     }
 
-    window.location.replace(TARGET_URL);
+    // Est-on lancé depuis l'icône installée ?
+    var estInstallee =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+
+    if (estInstallee) {
+      window.location.replace(TARGET_URL);   // app installée -> on ouvre le portail
+    } else {
+      // Dans le navigateur : on affiche un bouton pour ouvrir le portail
+      document.querySelector('.splash p').innerHTML =
+        '<a href="' + TARGET_URL + '" style="color:#fff;">Ouvrir le portail</a>';
+    }
   </script>
 </body>
 </html>
