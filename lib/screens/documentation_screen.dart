@@ -51,31 +51,35 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               const TextSpan(text: "\n\n"),
               TextSpan(
                 text: ol('doc_bottom_bar_title'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const TextSpan(text: "\n"),
-              TextSpan(text: ol('doc_bottom_bar_body')
-              ),
-            const WidgetSpan(
+              TextSpan(text: ol('doc_bottom_bar_body')),
+              const WidgetSpan(
                 child: Icon(Icons.explore_outlined, size: iconSize),
                 alignment: PlaceholderAlignment.middle,
               ),
-              TextSpan(text: ol('doc_bottom_bar_compass')
-              ),
-                   const WidgetSpan(
+              TextSpan(text: ol('doc_bottom_bar_compass')),
+              const WidgetSpan(
                 child: Icon(Icons.bar_chart, size: iconSize),
                 alignment: PlaceholderAlignment.middle,
               ),
-              TextSpan(text: ol('doc_bottom_bar_stats')
+              TextSpan(text: ol('doc_bottom_bar_stats')),
+              TextSpan(text: ol('doc_suivi_bar_position')),
+              const WidgetSpan(
+                child: Icon(Icons.share_location, size: iconSize),
+                alignment: PlaceholderAlignment.middle,
               ),
-
+              TextSpan(text: ol('doc_suivi_bar_position_body')),
               //---------------------------
               // The Tracks Title
               //---------------------------
               const TextSpan(text: "\n\n"),
               TextSpan(
-                text: ol('doc_tracks_title'), 
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                text: ol('doc_tracks_title'),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const TextSpan(text: "\n"),
               TextSpan(text: ol('doc_tracks_button')),
@@ -95,7 +99,7 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
                 alignment: PlaceholderAlignment.middle,
               ),
               TextSpan(text: ol('doc_single_view')),
-             const WidgetSpan(
+              const WidgetSpan(
                 child: Icon(Icons.delete, size: iconSize),
                 alignment: PlaceholderAlignment.middle,
               ),
@@ -173,9 +177,10 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               // Notes
               //---------------------------
               const TextSpan(text: "\n\n"),
-              TextSpan(text: ol('doc_notes_title'),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-              ),
+              TextSpan(
+                  text: ol('doc_notes_title'),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20)),
               const TextSpan(text: "\n"),
               TextSpan(text: ol('doc_notes_intro')),
               const WidgetSpan(
@@ -212,7 +217,6 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               const TextSpan(text: "  "), // Small space
               TextSpan(text: ol('doc_archives_usage')),
 
-
               // --- Destinations Section ---
               const TextSpan(text: "\n\n"),
               TextSpan(
@@ -228,7 +232,7 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               ),
               TextSpan(text: ol('doc_dest_create_body')),
               TextSpan(text: ol('doc_dest_name_pos')),
-                const WidgetSpan(
+              const WidgetSpan(
                 child: Icon(Icons.my_location, size: iconSize),
                 alignment: PlaceholderAlignment.middle,
               ),
@@ -271,12 +275,13 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               const TextSpan(text: "\n"),
               TextSpan(text: ol('doc_vac_body_1')),
               TextSpan(text: ol('doc_vac_body_2')),
-               const WidgetSpan(
-                child: Icon(Icons.description,
+              const WidgetSpan(
+                child: Icon(
+                  Icons.description,
                   size: iconSize,
-                  color: Colors.orange,),
+                  color: Colors.orange,
+                ),
                 alignment: PlaceholderAlignment.middle,
-
               ),
 
               TextSpan(text: ol('doc_vac_body_3')),
@@ -284,11 +289,12 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               TextSpan(text: ol('doc_vac_body_5')),
               TextSpan(text: ol('doc_vac_body_6')),
               const WidgetSpan(
-                child: Icon(Icons.description,
+                child: Icon(
+                  Icons.description,
                   size: iconSize,
-                  color: Colors.green,),
+                  color: Colors.green,
+                ),
                 alignment: PlaceholderAlignment.middle,
-
               ),
               TextSpan(text: ol('doc_vac_body_7')),
 
@@ -298,7 +304,8 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               const TextSpan(text: "\n\n"),
               TextSpan(
                 text: ol('doc_settings_title'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const TextSpan(text: "\n"),
               TextSpan(text: ol('doc_settings_intro')),
@@ -313,7 +320,8 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               const TextSpan(text: "\n\n"),
               TextSpan(
                 text: ol('doc_simu_title'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const TextSpan(text: "\n"),
               TextSpan(text: ol('doc_simu_body')),
@@ -323,14 +331,20 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               ),
               const TextSpan(text: " "),
               TextSpan(text: ol('doc_simu_usage')),
-
+              const WidgetSpan(
+                child: Icon(Icons.streetview, size: iconSize),
+                alignment: PlaceholderAlignment.middle,
+              ),
+              const TextSpan(text: " "),
+              TextSpan(text: ol('doc_simu_usage_2')),
               //---------------------------
               // --- Pack Premium Section ---
               //---------------------------
               const TextSpan(text: "\n\n"),
               TextSpan(
                 text: ol('premium_title'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const TextSpan(text: "\n"),
               TextSpan(text: ol('doc_premium_intro')),
@@ -361,7 +375,6 @@ class _DocumentationScreenState extends State<DocumentationScreen> {
               const TextSpan(text: "\n"),
               TextSpan(text: ol('doc_close_app')),
               const TextSpan(text: "\n\n\n"),
-
             ],
           ),
         ),

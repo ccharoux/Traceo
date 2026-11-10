@@ -108,6 +108,37 @@ class LocaData with ChangeNotifier {
 
   String _getPosKey(DateTime dt) => dt.toLocal().toIso8601String().split('.')[0];
 
+  void updateSimulationPosition(Position newPosition) {
+    if (trace.isEmpty) {
+      startTime = _formatStartTime(newPosition.timestamp);
+      trace.add(newPosition);
+      recalculateTargetMetrics(newPosition);
+      notifyListeners();
+      return;
+    }
+
+    final lastPosition = trace.last;
+    final distance = Geolocator.distanceBetween(
+      lastPosition.latitude, lastPosition.longitude,
+      newPosition.latitude, newPosition.longitude,
+    );
+
+    travelledLengthDble += distance;
+    travelledLength = affKms(travelledLengthDble);
+    trace.add(newPosition);
+
+    speedValue = newPosition.speed * 3.6;
+    speed = '${speedValue.toStringAsFixed(1)} kmh';
+    altitude = '${newPosition.altitude.toStringAsFixed(0)} m';
+    headingDble = newPosition.heading;
+    heading = '${headingDble.toStringAsFixed(0)}°';
+
+    recalculateTargetMetrics(newPosition);
+    _checkWaypointProximity(newPosition);
+    _checkSegmentNotesProximity(newPosition);
+    notifyListeners();
+  }
+
   bool updatePosition(Position newPosition) {
     if (newPosition.accuracy > 50) return false;
 

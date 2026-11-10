@@ -24,90 +24,292 @@ const Map<String, List<String>> _translations = {
 
   // Map Screen
   'tracking': ["Suivi en cours", "Tracking", "Seguimiento"],
-  'acquiring_gps': ["Acquisition GPS en cours...", "Acquiring GPS...", "Adquiriendo GPS..."],
+  'acquiring_gps': [
+    "Acquisition GPS en cours...",
+    "Acquiring GPS...",
+    "Adquiriendo GPS..."
+  ],
   'gps_error_start': ["Erreur d'acquisition GPS", "GPS Error", "Error de GPS"],
-  'tracking_error': ["Erreur de suivi", "Tracking Error", "Error de seguimiento"],
-  'start_tracking_prompt': ["Appuyez sur le bouton vert pour démarrer.",
+  'tracking_error': [
+    "Erreur de suivi",
+    "Tracking Error",
+    "Error de seguimiento"
+  ],
+  'start_tracking_prompt': [
+    "Appuyez sur le bouton vert pour démarrer.",
     "Press the green button to start.",
-    "Pulsa el bouton verde para empezar."],
-  'foreground_notification_title': ["Traceo Suivi GPS", "Traceo GPS Tracking", "Traceo Seguimiento GPS"],
-  'foreground_notification_text': ["L'application enregistre votre position", "The app is recording your position", "La aplicación está grabando su posición"],
-  'map_type_tooltip': ["Changer le type de carte", "Change map type", "Cambiar tipo de mapa"],
+    "Pulsa el bouton verde para empezar."
+  ],
+  'foreground_notification_title': [
+    "Traceo Suivi GPS",
+    "Traceo GPS Tracking",
+    "Traceo Seguimiento GPS"
+  ],
+  'foreground_notification_text': [
+    "L'application enregistre votre position",
+    "The app is recording your position",
+    "La aplicación está grabando su posición"
+  ],
+  'map_type_tooltip': [
+    "Changer le type de carte",
+    "Change map type",
+    "Cambiar tipo de mapa"
+  ],
   'tracks_title': ["Mes Traces", "My Tracks", "Mis Pistas"],
   'destination_set': ["Destination : ", "Destination: ", "Destino: "],
   'home_saved': ["Sauvegardé", "Saved", "Guardado"],
   'take_photo': ["Prendre une photo", "Take a photo", "Tomar una photo"],
-  'share_location': ["Partager ma position", "Share my location", "Compartir mi ubicación"],
-  'here_is_my_location': ["Voici ma position","Here is my location","Aquí está mi ubicación"],
+  'share_location': [
+    "Partager ma position",
+    "Share my location",
+    "Compartir mi ubicación"
+  ],
+  'here_is_my_location': [
+    "Voici ma position",
+    "Here is my location",
+    "Aquí está mi ubicación"
+  ],
   'from_gallery': ["Depuis la galerie", "From gallery", "Desde la galería"],
   'add_note': ["Ajouter une note", "Add a note", "Añadir una nota"],
   'note_added': ["Note ajoutée", "Note added", "Nota añadida"],
   'photo_added': ["Photo ajoutée", "Photo added", "Foto añadida"],
   'photo': ["Photo", "Photo", "Foto"],
   'note': ["Note", "Note", "Nota"],
-  'note_hint': ["Votre message ici...", "Your message here...", "Su mensaje aquí..."],
-  'no_position_available': ["Position non disponible", "Position not available", "Posición no disponible"],
+  'note_hint': [
+    "Votre message ici...",
+    "Your message here...",
+    "Su mensaje aquí..."
+  ],
+  'no_position_available': [
+    "Position non disponible",
+    "Position not available",
+    "Posición no disponible"
+  ],
   'wp_reached': ["Point atteint :", "Point reached:", "Punto alcanzado:"],
   'heading_to': ["Cap vers", "Heading to", "Rumbo a"],
   'note_prefix': ["Note :", "Note:", "Nota:"],
-  'press_to_close': ["Appuyez pour fermer", "Press to close", "Presione para cerrar"],
+  'press_to_close': [
+    "Appuyez pour fermer",
+    "Press to close",
+    "Presione para cerrar"
+  ],
   'to': ["Vers", "To", "A"],
-  'pick_point_for_photo': ["Touchez la trace pour placer la photo", "Tap the track to place the photo", "Toque la pista para colocar la foto"],
-  'track_image_share_text': ["Regardez ma trace sur Traceo !", "Check out my track on Traceo!", "¡Mira mi pista en Traceo!"],
-  'share_failed_snackbar': ["Échec du partage", "Share failed", "Fallo al compartir"],
+  'pick_point_for_photo': [
+    "Touchez la trace pour placer la photo",
+    "Tap the track to place the photo",
+    "Toque la pista para colocar la foto"
+  ],
+  'track_image_share_text': [
+    "Regardez ma trace sur Traceo !",
+    "Check out my track on Traceo!",
+    "¡Mira mi pista en Traceo!"
+  ],
+  'share_failed_snackbar': [
+    "Échec du partage",
+    "Share failed",
+    "Fallo al compartir"
+  ],
   'group_view_title': ["Vue groupée", "Group view", "Vista de groupe"],
   'stop': ["Arrêt", "Stop", "Parada"],
-  'pick_destination_title': ["Choisir destination", "Pick destination", "Elegir destino"],
-  'search_address_hint': ["Rechercher une adresse...", "Search an address...", "Buscar una dirección..."],
+  'pick_destination_title': [
+    "Choisir destination",
+    "Pick destination",
+    "Elegir destino"
+  ],
+  'search_address_hint': [
+    "Rechercher une adresse...",
+    "Search an address...",
+    "Buscar una dirección..."
+  ],
   'is_aerodrome': ["Aérodrome ?", "Is aerodrome?", "¿Es aeródromo?"],
-  'create_destination': ["Créer destination", "Create destination", "Crear destino"],
+  'create_destination': [
+    "Créer destination",
+    "Create destination",
+    "Crear destino"
+  ],
   'gps_error': ["Erreur de localisation", "GPS Error", "Error de GPS"],
-  'address_not_found': ["Adresse non trouvée", "Address not found", "Dirección no encontrada"],
+  'address_not_found': [
+    "Adresse non trouvée",
+    "Address not found",
+    "Dirección no encontrada"
+  ],
   'namereq': ["obligatoire", "required", "obligatorio"],
   'destination': ["Destination", "Destination", "Destino"],
-  'destination_already_exists': ["Cette destination existe déjà", "This destination already exists", "Este destino ya existe"],
-  'tiles_count': ["Tuiles stockées :", "Tiles stored:", "Mosaicos almacenados:"],
+  'destination_already_exists': [
+    "Cette destination existe déjà",
+    "This destination already exists",
+    "Este destino ya existe"
+  ],
+  'tiles_count': [
+    "Tuiles stockées :",
+    "Tiles stored:",
+    "Mosaicos almacenados:"
+  ],
   'cache_size': ["Taille du cache :", "Cache size:", "Tamaño de caché:"],
   'cache_cleared': ["Cache vidé", "Cache cleared", "Caché vaciado"],
-  'choose_destination': ["Choisir une destination", "Choose a destination", "Elegir un destino"],
-  'no_destination_available': ["Aucune destination disponible", "No destination available", "Sin destinos disponibles"],
-  'export_success': ["Exportation réussie", "Export successful", "Exportación exitosa"],
-  'import_success': ["Importation réussie", "Import successful", "Importación exitosa"],
-  'no_destinations_to_export': ["Aucune destination à exporter", "No destinations to export", "Sin destinos para exportar"],
-  'export_destinations_share_text': ["Mes destinations Traceo", "My Traceo destinations", "Mis destinos Traceo"],
-  'import_cancelled': ["Importation annulée", "Import cancelled", "Importación cancelada"],
-  'import_error': ["Erreur lors de l'importation", "Import error", "Error de importación"],
-  'no_destinations_in_file': ["Aucune destination dans le fichier", "No destinations in file", "Sin destinos en el archivo"],
-  'destinations_imported_success': ["destinations importées avec succès", "destinations imported successfully", "destinos importados con éxito"],
-  'cut_instruction_snackbar': ["Tapez sur un point de la trace pour la scinder en deux", "Tap a point on the track to split it in two", "Toque un punto en la pista para dividirla en dos"],
+  'choose_destination': [
+    "Choisir une destination",
+    "Choose a destination",
+    "Elegir un destino"
+  ],
+  'no_destination_available': [
+    "Aucune destination disponible",
+    "No destination available",
+    "Sin destinos disponibles"
+  ],
+  'export_success': [
+    "Exportation réussie",
+    "Export successful",
+    "Exportación exitosa"
+  ],
+  'import_success': [
+    "Importation réussie",
+    "Import successful",
+    "Importación exitosa"
+  ],
+  'no_destinations_to_export': [
+    "Aucune destination à exporter",
+    "No destinations to export",
+    "Sin destinos para exportar"
+  ],
+  'export_destinations_share_text': [
+    "Mes destinations Traceo",
+    "My Traceo destinations",
+    "Mis destinos Traceo"
+  ],
+  'import_cancelled': [
+    "Importation annulée",
+    "Import cancelled",
+    "Importación cancelada"
+  ],
+  'import_error': [
+    "Erreur lors de l'importation",
+    "Import error",
+    "Error de importación"
+  ],
+  'no_destinations_in_file': [
+    "Aucune destination dans le fichier",
+    "No destinations in file",
+    "Sin destinos en el archivo"
+  ],
+  'destinations_imported_success': [
+    "destinations importées avec succès",
+    "destinations imported successfully",
+    "destinos importados con éxito"
+  ],
+  'cut_instruction_snackbar': [
+    "Tapez sur un point de la trace pour la scinder en deux",
+    "Tap a point on the track to split it in two",
+    "Toque un punto en la pista para dividirla en dos"
+  ],
 
   // Preparation
-  'flight_preparation': ["Préparation de vol", "Flight preparation", "Preparación de vuelo"],
-  'flight_preparation_short': ["Préparation de", "Preparation of", "Preparación de"],
+  'flight_preparation': [
+    "Préparation de vol",
+    "Flight preparation",
+    "Preparación de vuelo"
+  ],
+  'flight_preparation_short': [
+    "Préparation de",
+    "Preparation of",
+    "Preparación de"
+  ],
   'departure_point': ["Départ", "Departure", "Salida"],
-  'choose_aerodrome_for_prep': ["Choisissez un aérodrome pour préparer le vol", "Choose an aerodrome for flight preparation", "Elija un aeródromo para la preparación del vuelo"],
-  'nav_point': ["Point de navigation", "Navigation point", "Punto de navegación"],
-  'name_this_point': ["Donnez un nom à ce point", "Name this point", "Dé un nombre a este point"],
+  'choose_aerodrome_for_prep': [
+    "Choisissez un aérodrome pour préparer le vol",
+    "Choose an aerodrome for flight preparation",
+    "Elija un aeródromo para la preparación del vuelo"
+  ],
+  'nav_point': [
+    "Point de navigation",
+    "Navigation point",
+    "Punto de navegación"
+  ],
+  'name_this_point': [
+    "Donnez un nom à ce point",
+    "Name this point",
+    "Dé un nombre a este point"
+  ],
   'edit_point': ["Modifier le point", "Edit point", "Editar punto"],
-  'delete_point_q': ["Supprimer le point ?", "Delete point?", "¿Eliminar punto?"],
-  'remove_point_from_route': ["Voulez-vous supprimer le point %s ?", "Remove point %s from route?", "¿Eliminar el punto %s de la ruta?"],
-  'route_saved_msg': ["Plan de vol vers %s sauvegardé", "Flight plan to %s saved", "Plan de vuelo a %s guardado"],
-  'undo_last_change': ["Annuler la dernière modif", "Undo last change", "Deshacer último cambio"],
-  'drag_points_instruction': ["Glissez les points pour ajuster", "Drag points to adjust", "Arrastre los points pour ajuster"],
-  'add_route_note': ["Ajouter une note sur la branche", "Add segment note", "Añadir nota de tramo"],
-  'tap_segment_to_add_note': ["Appuyez sur un segment pour ajouter une note", "Tap a segment to add a note", "Toque un tramo para añadir una nota"],
+  'delete_point_q': [
+    "Supprimer le point ?",
+    "Delete point?",
+    "¿Eliminar punto?"
+  ],
+  'remove_point_from_route': [
+    "Voulez-vous supprimer le point %s ?",
+    "Remove point %s from route?",
+    "¿Eliminar el punto %s de la ruta?"
+  ],
+  'route_saved_msg': [
+    "Plan de vol vers %s sauvegardé",
+    "Flight plan to %s saved",
+    "Plan de vuelo a %s guardado"
+  ],
+  'undo_last_change': [
+    "Annuler la dernière modif",
+    "Undo last change",
+    "Deshacer último cambio"
+  ],
+  'drag_points_instruction': [
+    "Glissez les points pour ajuster",
+    "Drag points to adjust",
+    "Arrastre los points pour ajuster"
+  ],
+  'add_route_note': [
+    "Ajouter une note sur la branche",
+    "Add segment note",
+    "Añadir nota de tramo"
+  ],
+  'tap_segment_to_add_note': [
+    "Appuyez sur un segment pour ajouter une note",
+    "Tap a segment to add a note",
+    "Toque un tramo para añadir una nota"
+  ],
   'route_note': ["Note de segment", "Segment note", "Nota de tramo"],
-  'enter_segment_note': ["Entrez votre note pour ce segment", "Enter your note for this segment", "Ingrese su nota para este tramo"],
+  'enter_segment_note': [
+    "Entrez votre note pour ce segment",
+    "Enter your note for this segment",
+    "Ingrese su nota para este tramo"
+  ],
   'segment_note': ["Note sur la branche", "Segment note", "Nota de tramo"],
-  'prep_help_title': ["Aide à la préparation", "Preparation Help", "Ayuda de preparación"],
-  'help_prep_1': ["Appuyez sur la carte pour ajouter un point de navigation.", "Tap the map to add a navigation point.", "Toque el mapa para añadir un punto de navegación."],
-  'help_prep_2': ["Maintenez et glissez un point bleu pour le déplacer.", "Long press and drag a blue point to move it.", "Mantenga presionado y arrastre un punto azul para moverlo."],
-  'help_prep_3': ["Appuyez sur un point bleu pour le renommer ou le supprimer.", "Tap a blue point to rename or delete it.", "Toque un punto azul para renombrarlo o eliminarlo."],
-  'help_prep_4': ["Utilisez l'icône 'Note' puis appuyez sur un segment (ligne pointillée) pour y ajouter une note.", "Use the 'Note' icon then tap a segment (dashed line) to add a note to it.", "Use el icono 'Nota' y luego toque un tramo (línea de puntos) para añadir una nota."],
-  'help_prep_5': ["Une fois terminé, enregistrez avec le bouton bleu.", "Once finished, save with the blue button.", "Una vez terminado, guarde con le botón azul."],
+  'prep_help_title': [
+    "Aide à la préparation",
+    "Preparation Help",
+    "Ayuda de preparación"
+  ],
+  'help_prep_1': [
+    "Appuyez sur la carte pour ajouter un point de navigation.",
+    "Tap the map to add a navigation point.",
+    "Toque el mapa para añadir un punto de navegación."
+  ],
+  'help_prep_2': [
+    "Maintenez et glissez un point bleu pour le déplacer.",
+    "Long press and drag a blue point to move it.",
+    "Mantenga presionado y arrastre un punto azul para moverlo."
+  ],
+  'help_prep_3': [
+    "Appuyez sur un point bleu pour le renommer ou le supprimer.",
+    "Tap a blue point to rename or delete it.",
+    "Toque un punto azul para renombrarlo o eliminarlo."
+  ],
+  'help_prep_4': [
+    "Utilisez l'icône 'Note' puis appuyez sur un segment (ligne pointillée) pour y ajouter une note.",
+    "Use the 'Note' icon then tap a segment (dashed line) to add a note to it.",
+    "Use el icono 'Nota' y luego toque un tramo (línea de puntos) para añadir una nota."
+  ],
+  'help_prep_5': [
+    "Une fois terminé, enregistrez avec le bouton bleu.",
+    "Once finished, save with the blue button.",
+    "Una vez terminado, guarde con le botón azul."
+  ],
 
   // Stats Screen
-  'trip_stats': ["Statistiques du parcours", "Trip Statistics", "Estadísticas del viaje"],
+  'trip_stats': [
+    "Statistiques du parcours",
+    "Trip Statistics",
+    "Estadísticas del viaje"
+  ],
   'flying_to': ["Vol vers", "Flying to", "Volando a"],
   'departure': ["Départ :", "Departure:", "Salida:"],
   'straight_distance': ["Directe", "Direct", "Directa"],
@@ -120,67 +322,217 @@ const Map<String, List<String>> _translations = {
   'moving': ["En marche", "Moving", "En marcha"],
   'left': ["à gauche", "left", "a la izquierda"],
   'right': ["à droite", "right", "a la derecha"],
-  'vac_url_title': ["Consulter la carte VAC", "View VAC chart", "Consultar carta VAC"],
+  'vac_url_title': [
+    "Consulter la carte VAC",
+    "View VAC chart",
+    "Consultar carta VAC"
+  ],
   'start_point': ["Point de départ", "Start point", "Punto de partida"],
-  'error_launching_url': ["Impossible d'ouvrir l'URL", "Could not launch URL", "No se pudo abrir la URL"],
+  'error_launching_url': [
+    "Impossible d'ouvrir l'URL",
+    "Could not launch URL",
+    "No se pudo abrir la URL"
+  ],
   'by': ["par", "by", "por"],
 
   // Parameters
   'parameters': ["Paramètres", "Parameters", "Parámetros"],
-  'measurements': ["Unités de mesures", "Units of Measurement", "Unidades de medida"],
-  'km_unit': ["Kilomètres (km, km/h, m)", "Kilometers (km, km/h, m)", "Kilómetros (km, km/h, m)"],
-  'nm_unit': ["Milles Nautiques (NM, kt, ft)", "Nautical Miles (NM, kt, ft)", "Millas náuticas (NM, kt, ft)"],
-  'destination_line': ["Ligne vers destination", "Line to destination", "Línea al destino"],
-  'destination_line_sub': ["Ligne rouge pointillée", "Red dotted line", "Línea de puntos roja"],
+  'measurements': [
+    "Unités de mesures",
+    "Units of Measurement",
+    "Unidades de medida"
+  ],
+  'km_unit': [
+    "Kilomètres (km, km/h, m)",
+    "Kilometers (km, km/h, m)",
+    "Kilómetros (km, km/h, m)"
+  ],
+  'nm_unit': [
+    "Milles Nautiques (NM, kt, ft)",
+    "Nautical Miles (NM, kt, ft)",
+    "Millas náuticas (NM, kt, ft)"
+  ],
+  'destination_line': [
+    "Ligne vers destination",
+    "Line to destination",
+    "Línea al destino"
+  ],
+  'destination_line_sub': [
+    "Ligne rouge pointillée",
+    "Red dotted line",
+    "Línea de puntos roja"
+  ],
   'stop_time': ["Temps d'arrêt", "Stop time", "Tiempo de parada"],
-  'stop_time_sub': ["Voir les marqueurs bleus sur la trace", "Display blue markers on the track", "Ver los marqueurs bleus sur la trace"],
-  'stop_time_tooltip': ["Voir les marqueurs bleus sur la trace", "Display Blue markers on the track", "Marcadores azules en la pista"],
-  'oaci_cache_title': ["Cache Cartes OACI", "OACI Map Cache", "Caché de mapas OACI"],
-  'tiles_stored': ["%s tuiles stockées", "%s tiles stored", "%s mosaicos almacenados"],
-  'space_occupied': ["Espace occupé : %s", "Space occupied: %s", "Espacio ocupado: %s"],
-  'cache_cleared_msg': ["Cache OACI vidé", "OACI cache cleared", "Caché OACI vaciado"],
+  'stop_time_sub': [
+    "Voir les marqueurs bleus sur la trace",
+    "Display blue markers on the track",
+    "Ver los marqueurs bleus sur la trace"
+  ],
+  'stop_time_tooltip': [
+    "Voir les marqueurs bleus sur la trace",
+    "Display Blue markers on the track",
+    "Marcadores azules en la pista"
+  ],
+  'oaci_cache_title': [
+    "Cache Cartes OACI",
+    "OACI Map Cache",
+    "Caché de mapas OACI"
+  ],
+  'tiles_stored': [
+    "%s tuiles stockées",
+    "%s tiles stored",
+    "%s mosaicos almacenados"
+  ],
+  'space_occupied': [
+    "Espace occupé : %s",
+    "Space occupied: %s",
+    "Espacio ocupado: %s"
+  ],
+  'cache_cleared_msg': [
+    "Cache OACI vidé",
+    "OACI cache cleared",
+    "Caché OACI vaciado"
+  ],
   'clear_cache': ["Vider le cache", "Clear cache", "Vaciar caché"],
   'import_cache': ["Importer le cache", "Import cache", "Importar caché"],
   'export_cache': ["Exporter le cache", "Export cache", "Exportar caché"],
-  'export_cache_success': ["Cache exporté avec succès", "Cache exported successfully", "Caché exportado con éxito"],
-  'error_exporting_cache': ["Erreur lors de l'exportation du cache", "Error exporting cache", "Error al exportar le caché"],
-  'error_importing_cache': ["Erreur lors de l'importation du cache", "Error importing cache", "Error al importar le caché"],
+  'export_cache_success': [
+    "Cache exporté avec succès",
+    "Cache exported successfully",
+    "Caché exportado con éxito"
+  ],
+  'error_exporting_cache': [
+    "Erreur lors de l'exportation du cache",
+    "Error exporting cache",
+    "Error al exportar le caché"
+  ],
+  'error_importing_cache': [
+    "Erreur lors de l'importation du cache",
+    "Error importing cache",
+    "Error al importar le caché"
+  ],
   'show_compass_tooltip': ["Afficher le cap", "Show compass", "Mostrar rumbo"],
 
   // Premium
   'premium_title': ["Pack Premium", "Premium Pack", "Pack Premium"],
-  'premium_desc': ["Le stockage et l'affichage des cartes VAC sont réservés aux utilisateurs Premium.", "VAC charts storage and display are reserved for Premium users.", "El almacenamiento y visualización de cartas VAC están reservados para usuarios Premium."],
+  'premium_desc': [
+    "Le stockage et l'affichage des cartes VAC sont réservés aux utilisateurs Premium.",
+    "VAC charts storage and display are reserved for Premium users.",
+    "El almacenamiento y visualización de cartas VAC están reservados para usuarios Premium."
+  ],
   'premium_buy': ["Acheter", "Buy", "Comprar"],
   'premium_buy_label': ["Acheter", "Buy", "Comprar"],
   'oaci_cache': ["Cache OACI", "OACI Cache", "Caché OACI"],
-  'oaci_quota_exceeded': ["Quota API OpenAIP atteint. Les cartes OACI peuvent ne pas se charger.", "OpenAIP quota exceeded. OACI maps may not load.", "Cupo OpenAIP excedido. Los mapas OACI pourraient no cargarse."],
-  'upgrade_premium': ["Passer au Pack Premium", "Upgrade to Premium", "Pasar al Pack Premium"],
-  'restore_purchases': ["Restaurer mes achats", "Restore purchases", "Restaurar mis compras"],
-  'access_activated': ["Accès Activé !", "Access Activated!", "¡Acceso Activado!"],
-  'archive_allowed': ["Vous pouvez maintenant archiver vos traces.", "You can now archive your tracks.", "Ahora puedes archivar tus pistas."],
-  'archive_benefit': ["L'archivage permet de libérer de l'espace tout en conservant vos traces.", "Archiving allows you to free up space while keeping your tracks.", "El archivado permite liberar espacio mientras conservas tus pistas."],
+  'oaci_quota_exceeded': [
+    "Quota API OpenAIP atteint. Les cartes OACI peuvent ne pas se charger.",
+    "OpenAIP quota exceeded. OACI maps may not load.",
+    "Cupo OpenAIP excedido. Los mapas OACI pourraient no cargarse."
+  ],
+  'upgrade_premium': [
+    "Passer au Pack Premium",
+    "Upgrade to Premium",
+    "Pasar al Pack Premium"
+  ],
+  'restore_purchases': [
+    "Restaurer mes achats",
+    "Restore purchases",
+    "Restaurar mis compras"
+  ],
+  'access_activated': [
+    "Accès Activé !",
+    "Access Activated!",
+    "¡Acceso Activado!"
+  ],
+  'archive_allowed': [
+    "Vous pouvez maintenant archiver vos traces.",
+    "You can now archive your tracks.",
+    "Ahora puedes archivar tus pistas."
+  ],
+  'archive_benefit': [
+    "L'archivage permet de libérer de l'espace tout en conservant vos traces.",
+    "Archiving allows you to free up space while keeping your tracks.",
+    "El archivado permite liberar espacio mientras conservas tus pistas."
+  ],
 
   // Drawer
-  'manage_destinations': ["Mes Destinations", "Manage Destinations", "Mis Destinos"],
-  'name_current_position': ["Nommer ma position", "Name current position", "Nombrar mi posición"],
-  'enter_destination_name_hint': ["Nom de la destination", "Destination name", "Nombre del destino"],
-  'create_destination_on_map': ["Créer sur la carte", "Create on map", "Crear en el mapa"],
-  'change_destination': ["Changer de destination", "Change destination", "Cambiar destino"],
-  'google_maps_route': ["Itinéraire Google Maps", "Google Maps route", "Ruta de Google Maps"],
-  'simulate_track': ["Refaire le chemin d'une trace", "Retracing the path of a track", "Recorriendo le camino de una pista"],
+  'manage_destinations': [
+    "Mes Destinations",
+    "Manage Destinations",
+    "Mis Destinos"
+  ],
+  'name_current_position': [
+    "Nommer ma position",
+    "Name current position",
+    "Nombrar mi posición"
+  ],
+  'enter_destination_name_hint': [
+    "Nom de la destination",
+    "Destination name",
+    "Nombre del destino"
+  ],
+  'create_destination_on_map': [
+    "Créer sur la carte",
+    "Create on map",
+    "Crear en el mapa"
+  ],
+  'change_destination': [
+    "Changer de destination",
+    "Change destination",
+    "Cambiar destino"
+  ],
+  'google_maps_route': [
+    "Itinéraire Google Maps",
+    "Google Maps route",
+    "Ruta de Google Maps"
+  ],
+  'simulate_track': [
+    "Refaire le chemin d'une trace",
+    "Retracing the path of a track",
+    "Recorriendo le camino de una pista"
+  ],
+  'street_view': [
+    "Street View",
+    "Street View",
+    "Street View"
+  ],
+  'back_to_map': [
+    "Retour à la carte",
+    "Back to map",
+    "Volver al mapa"
+  ],
   'documentation': ["Documentation", "Documentation", "Documentación"],
-  'restoring_purchases': ["Recherche d'anciens achats en cours...", "Restoring purchases...", "Restaurando compras..."],
+  'restoring_purchases': [
+    "Recherche d'anciens achats en cours...",
+    "Restoring purchases...",
+    "Restaurando compras..."
+  ],
 
   // Tracks Screen
   'traces_list_banner': ["Mes Traces", "My Tracks", "Mis Pistas"],
   'archives': ["Archives", "Archives", "Archivos"],
-  'select_track_to_simulate': ["Choisir une trace", "Select a track", "Seleccionar una pista"],
+  'select_track_to_simulate': [
+    "Choisir une trace",
+    "Select a track",
+    "Seleccionar una pista"
+  ],
   'export_all': ["Tout exporter", "Export all", "Exportar todo"],
   'import_tracks': ["Importer", "Import", "Importar"],
-  'no_tracks': ["Aucune trace enregistrée", "No tracks recorded", "No hay pistas grabadas"],
-  'search_tracks': ["Rechercher une trace...", "Search tracks...", "Buscar pista..."],
+  'no_tracks': [
+    "Aucune trace enregistrée",
+    "No tracks recorded",
+    "No hay pistas grabadas"
+  ],
+  'search_tracks': [
+    "Rechercher une trace...",
+    "Search tracks...",
+    "Buscar pista..."
+  ],
   'delete_all_q': ["Tout supprimer ?", "Delete all?", "¿Eliminar todo?"],
-  'delete_all_confirm': ["Voulez-vous supprimer toutes les traces ?", "Do you want to delete all tracks?", "¿Desea supprimer toutes les traces ?"],
+  'delete_all_confirm': [
+    "Voulez-vous supprimer toutes les traces ?",
+    "Do you want to delete all tracks?",
+    "¿Desea supprimer toutes les traces ?"
+  ],
   'view_button': ["Afficher", "View", "Ver"],
   'delete_button': ["Supprimer", "Delete", "Eliminar"],
   'share_button': ["Partager", "Share", "Compartir"],
@@ -193,118 +545,478 @@ const Map<String, List<String>> _translations = {
   'sort_button': ["Trier", "Sort", "Ordenar"],
   'send_field': ["Envoyer", "Send", "Enviar"],
   'receive_field': ["Recevoir", "Receive", "Recibir"],
-  'import_shared_tracks': ["Importer des traces partagées", "Import shared tracks", "Importar pistas compartidas"],
-  'export_archives': ["Exporter les archives", "Export archives", "Exportar archivos"],
-  'import_archives': ["Importer les archives", "Import archives", "Importar archivos"],
+  'import_shared_tracks': [
+    "Importer des traces partagées",
+    "Import shared tracks",
+    "Importar pistas compartidas"
+  ],
+  'export_archives': [
+    "Exporter les archives",
+    "Export archives",
+    "Exportar archivos"
+  ],
+  'import_archives': [
+    "Importer les archives",
+    "Import archives",
+    "Importar archivos"
+  ],
   'unarchive': ["Désarchiver", "Unarchive", "Desarchivar"],
-  'export_size_warning': ["Le fichier est volumineux (%s Mo). Voulez-vous continuer ?", "The file is large (%s MB). Do you want to continue?", "El archivo es grande (%s MB). ¿Desea continuar?"],
-  'error_exporting_archives': ["Erreur lors de l'exportation", "Error exporting archives", "Error al exportar archivos"],
-  'tracks_unarchived_snackbar': ["Traces désarchivées", "Tracks unarchived", "Pistas desarchivadas"],
-  'archives_deleted_snackbar': ["Archives supprimées", "Archives deleted", "Archivos eliminados"],
-  'tracks_deleted_snackbar': ["Traces supprimées", "Tracks deleted", "Pistas eliminadas"],
-  'merge_success_snackbar': ["Traces fusionnées sous le nom", "Tracks merged as", "Pistas fusionadas como"],
-  'merge_failed_snackbar': ["Échec de la fusion", "Merge failed", "Fallo en la fusión"],
-  'track_renamed_snackbar': ["Trace renommée en", "Track renamed to", "Pista renombrada a"],
-  'tracks_archived_snackbar': ["Traces archivées", "Tracks archivées", "Pistas archivadas"],
-  'no_track_selected': ["Aucune trace sélectionnée", "No track selected", "Ninguna pista seleccionada"],
+  'export_size_warning': [
+    "Le fichier est volumineux (%s Mo). Voulez-vous continuer ?",
+    "The file is large (%s MB). Do you want to continue?",
+    "El archivo es grande (%s MB). ¿Desea continuar?"
+  ],
+  'error_exporting_archives': [
+    "Erreur lors de l'exportation",
+    "Error exporting archives",
+    "Error al exportar archivos"
+  ],
+  'tracks_unarchived_snackbar': [
+    "Traces désarchivées",
+    "Tracks unarchived",
+    "Pistas desarchivadas"
+  ],
+  'archives_deleted_snackbar': [
+    "Archives supprimées",
+    "Archives deleted",
+    "Archivos eliminados"
+  ],
+  'tracks_deleted_snackbar': [
+    "Traces supprimées",
+    "Tracks deleted",
+    "Pistas eliminadas"
+  ],
+  'merge_success_snackbar': [
+    "Traces fusionnées sous le nom",
+    "Tracks merged as",
+    "Pistas fusionadas como"
+  ],
+  'merge_failed_snackbar': [
+    "Échec de la fusion",
+    "Merge failed",
+    "Fallo en la fusión"
+  ],
+  'track_renamed_snackbar': [
+    "Trace renommée en",
+    "Track renamed to",
+    "Pista renombrada a"
+  ],
+  'tracks_archived_snackbar': [
+    "Traces archivées",
+    "Tracks archivées",
+    "Pistas archivadas"
+  ],
+  'no_track_selected': [
+    "Aucune trace sélectionnée",
+    "No track selected",
+    "Ninguna pista seleccionada"
+  ],
   'share_tracks': ["Partager les traces", "Share tracks", "Compartir pistas"],
-  'share_tracks_text': ["Voici mes traces GPS", "Here are my GPS tracks", "Aquí están mis pistas GPS"],
-  'error_sharing_tracks': ["Erreur lors du partage", "Error sharing tracks", "Error al compartir"],
-  'rename_prompt_title': ["Renommer la trace", "Rename track", "Renombrar pista"],
+  'share_tracks_text': [
+    "Voici mes traces GPS",
+    "Here are my GPS tracks",
+    "Aquí están mis pistas GPS"
+  ],
+  'error_sharing_tracks': [
+    "Erreur lors du partage",
+    "Error sharing tracks",
+    "Error al compartir"
+  ],
+  'rename_prompt_title': [
+    "Renommer la trace",
+    "Rename track",
+    "Renombrar pista"
+  ],
   'rename_prompt_hint': ["Nouveau nom", "New name", "Nuevo nombre"],
   'delete_prompt_title': ["Supprimer", "Delete", "Eliminar"],
-  'selected_tracks': ["traces sélectionnées", "selected tracks", "pistas seleccionadas"],
-  'delete_prompt_body': ["Voulez-vous supprimer les traces sélectionnées ?", "Do you want to delete selected tracks?", "¿Desea supprimer toutes les traces ?"],
-  'merge_delete_sources': ["Supprimer les traces d'origine ?", "Delete original tracks?", "¿Eliminar pistas originales?"],
+  'selected_tracks': [
+    "traces sélectionnées",
+    "selected tracks",
+    "pistas seleccionadas"
+  ],
+  'delete_prompt_body': [
+    "Voulez-vous supprimer les traces sélectionnées ?",
+    "Do you want to delete selected tracks?",
+    "¿Desea supprimer toutes les traces ?"
+  ],
+  'merge_delete_sources': [
+    "Supprimer les traces d'origine ?",
+    "Delete original tracks?",
+    "¿Eliminar pistas originales?"
+  ],
   'sort_name': ["Trier par nom", "Sort by name", "Ordenar por nombre"],
   'sort_date': ["Trier par date", "Sort by date", "Ordenar por fecha"],
-  'sort_distance': ["Trier par distance", "Sort by distance", "Ordenar por distancia"],
-  'delete_destination_confirm_message': ["Voulez-vous supprimer", "Do you want to delete", "¿Desea eliminar"],
-  'merge_min_selection': ["Veuillez sélectionner au moins deux traces à fusionner.", "Please select at least two tracks to merge.", "Por favor, selecciona al menos dos pistas para fusionar."],
-  'archives_backup_text': ["Sauvegarde des archives Traceo", "Traceo Archives Backup", "Copia de seguridad de archivos Traceo"],
-  'shared_tracks_filename': ["traces_partagees", "shared_tracks", "pistas_compartidas"],
+  'sort_distance': [
+    "Trier par distance",
+    "Sort by distance",
+    "Ordenar por distancia"
+  ],
+  'delete_destination_confirm_message': [
+    "Voulez-vous supprimer",
+    "Do you want to delete",
+    "¿Desea eliminar"
+  ],
+  'merge_min_selection': [
+    "Veuillez sélectionner au moins deux traces à fusionner.",
+    "Please select at least two tracks to merge.",
+    "Por favor, selecciona al menos dos pistas para fusionar."
+  ],
+  'archives_backup_text': [
+    "Sauvegarde des archives Traceo",
+    "Traceo Archives Backup",
+    "Copia de seguridad de archivos Traceo"
+  ],
+  'shared_tracks_filename': [
+    "traces_partagees",
+    "shared_tracks",
+    "pistas_compartidas"
+  ],
 
   // Simulation
-  'simulation_disabled_during_tracking': ["Simulation désactivée pendant le suivi", "Simulation disabled during tracking", "Simulación desactivada durante el seguimiento"],
+  'simulation_disabled_during_tracking': [
+    "Simulation désactivée pendant le suivi",
+    "Simulation disabled during tracking",
+    "Simulación desactivada durante el seguimiento"
+  ],
   'start_simulation': ["Simulation", "Simulation", "Simulación"],
   'pause': ["Pause", "Pause", "Pausa"],
-  'simulation_stopped': ["Simulation arrêtée", "Simulation stopped", "Simulación detenida"],
+  'simulation_stopped': [
+    "Simulation arrêtée",
+    "Simulation stopped",
+    "Simulación detenida"
+  ],
   'simulation_speed_increase': ["Plus rapide", "Faster", "Más rapide"],
   'simulation_speed_decrease': ["Plus lent", "Slower", "Más lento"],
-  'no_simulation_data': ["Données manquantes", "Missing data", "Datos faltantes"],
+  'no_simulation_data': [
+    "Données manquantes",
+    "Missing data",
+    "Datos faltantes"
+  ],
 
   // Documentation
   'doc_intro_1': ["Appuyez sur ", "Press ", "Presione "],
-  'doc_stop_1': [" pour démarrer l'enregistrement de votre trace. Appuyez sur ", " to start recording your track. Press ", " para comenzar a grabar su pista. Presione "],
-  'doc_intro_2': [" pour arrêter l'enregistrement et sauvegarder la trace dans la liste ", " to stop recording and save the track in the list ", " para detener la grabación y guardar la pista en la liste "],
-  'doc_intro_3': [" accessible depuis le menu.", " accessible from the menu.", " accesible desde el menú."],
-  'doc_bottom_bar_title': ["Barre d'outils", "Toolbar", "Barra de herramientas"],
-  'doc_bottom_bar_body': ["Pendant le suivi, la barre inférieure affiche les informations de vol. L'icône ", "During tracking, the bottom bar displays flight information. The icon ", "Durante el seguimiento, la barre inférieure muestra información de vuelo. El icono "],
-  'doc_bottom_bar_compass': [" affiche le cap et le relèvement. ", " shows the heading and bearing. ", " muestra el rumbo y la demora. "],
-  'doc_bottom_bar_stats': [" affiche les statistiques détaillées du parcours.", " shows detailed trip statistics.", " muestra estadísticas détaillées du parcours."],
-  'doc_tracks_title': ["Gestion des Traces", "Track Management", "Gestión de Pistas"],
+  'doc_stop_1': [
+    " pour démarrer l'enregistrement de votre trace. Appuyez sur ",
+    " to start recording your track. Press ",
+    " para comenzar a grabar su pista. Presione "
+  ],
+  'doc_intro_2': [
+    " pour arrêter l'enregistrement et sauvegarder la trace dans la liste ",
+    " to stop recording and save the track in the list ",
+    " para detener la grabación y guardar la pista en la liste "
+  ],
+  'doc_intro_3': [
+    " accessible depuis le menu.",
+    " accessible from the menu.",
+    " accesible desde el menú."
+  ],
+  'doc_bottom_bar_title': [
+    "Barre d'outils",
+    "Toolbar",
+    "Barra de herramientas"
+  ],
+  'doc_bottom_bar_body': [
+    "Pendant le suivi, la barre inférieure affiche les informations de vol. L'icône ",
+    "During tracking, the bottom bar displays flight information. The icon ",
+    "Durante el seguimiento, la barre inférieure muestra información de vuelo. El icono "
+  ],
+  'doc_bottom_bar_compass': [
+    " affiche le cap et le relèvement. ",
+    " shows the heading and bearing. ",
+    " muestra el rumbo y la demora. "
+  ],
+  'doc_bottom_bar_stats': [
+    " affiche les statistiques détaillées du parcours.",
+    " shows detailed trip statistics.",
+    " muestra estadísticas détaillées du parcours."
+  ],
+  'doc_suivi_bar_position': ["l'icone ", "The icon ", "El icono "],
+  'doc_suivi_bar_position_body': [
+    " permet d'envoyer notre position",
+    " allows to send our position",
+    " permite enviar nuestra posición"
+  ],
+  'doc_tracks_title': [
+    "Gestion des Traces",
+    "Track Management",
+    "Gestión de Pistas"
+  ],
   'doc_tracks_button': ["Appuyez sur ", "Press ", "Presione "],
-  'doc_tracks_button_2': [" dans le menu pour voir vos traces enregistrées.", " in the menu to view your recorded tracks.", " en el menú para ver sus pistas grabadas."],
-  'doc_single_intro': ["Sur une trace seule : ", "On a single track: ", "En una sola pista: "],
-  'doc_single_view': [" affiche la trace sur la carte.", " displays the track on the map.", " muestra la pista en el mapa."],
-  'doc_single_delete': [" supprime la trace.", " deletes the track.", " elimina la pista."],
-  'doc_single_plus': [" ouvre plus d'options : ", " opens more options: ", " abre más opciones: "],
-  'doc_single_plus_merge': [" Fusionner avec d'autres traces.", " Merge with other tracks.", " Fusionar con otras pistas."],
-  'doc_single_plus_rename': [" Renommer la trace.", " Rename the track.", " Renombrar la pista."],
-  'doc_single_plus_archive': [" Archiver la trace.", " Archive the track.", " Archivar la pista."],
-  'doc_single_plus_sort': [" Exporter la trace.", " Export the track.", " Exportar la pista."],
-  'doc_single_plus_cut': [" Couper la trace à un point précis.", " Cut the track at a specific point.", " Cortar la pista en un punto específico."],
-  'doc_single_to_cut': ["Pour couper une trace, affichez-la sur la carte, puis utilisez l'option 'Couper' du menu.", "To cut a track, display it on the map, then use the 'Cut' option from the menu.", "Para cortar una pista, muéstrela en el mapa y luego use la option 'Cortar' del menú."],
-  'doc_multi_intro': ["Sélection multiple : ", "Multiple selection: ", "Selección múltiple: "],
-  'doc_multi_delete': [" supprime les traces sélectionnées.", " deletes selected tracks.", " elimina las pistas seleccionadas."],
-  'doc_multi_merge': [" fusionne les traces sélectionnées en une seule.", " merges selected tracks into one.", " fusiona las pistas seleccionadas en una."],
-  'doc_multi_plus': [" plus d'options pour la sélection : ", " more options for the selection: ", " más opciones pour la sélection : "],
+  'doc_tracks_button_2': [
+    " dans le menu pour voir vos traces enregistrées.",
+    " in the menu to view your recorded tracks.",
+    " en el menú para ver sus pistas grabadas."
+  ],
+  'doc_single_intro': [
+    "Sur une trace seule : ",
+    "On a single track: ",
+    "En una sola pista: "
+  ],
+  'doc_single_view': [
+    " affiche la trace sur la carte.",
+    " displays the track on the map.",
+    " muestra la pista en el mapa."
+  ],
+  'doc_single_delete': [
+    " supprime la trace.",
+    " deletes the track.",
+    " elimina la pista."
+  ],
+  'doc_single_plus': [
+    " ouvre plus d'options : ",
+    " opens more options: ",
+    " abre más opciones: "
+  ],
+  'doc_single_plus_merge': [
+    " Fusionner avec d'autres traces.",
+    " Merge with other tracks.",
+    " Fusionar con otras pistas."
+  ],
+  'doc_single_plus_rename': [
+    " Renommer la trace.",
+    " Rename the track.",
+    " Renombrar la pista."
+  ],
+  'doc_single_plus_archive': [
+    " Archiver la trace.",
+    " Archive the track.",
+    " Archivar la pista."
+  ],
+  'doc_single_plus_sort': [
+    " Exporter la trace.",
+    " Export the track.",
+    " Exportar la pista."
+  ],
+  'doc_single_plus_cut': [
+    " Couper la trace à un point précis.",
+    " Cut the track at a specific point.",
+    " Cortar la pista en un punto específico."
+  ],
+  'doc_single_to_cut': [
+    "Pour couper une trace, affichez-la sur la carte, puis utilisez l'option 'Couper' du menu.",
+    "To cut a track, display it on the map, then use the 'Cut' option from the menu.",
+    "Para cortar una pista, muéstrela en el mapa y luego use la option 'Cortar' del menú."
+  ],
+  'doc_multi_intro': [
+    "Sélection multiple : ",
+    "Multiple selection: ",
+    "Selección múltiple: "
+  ],
+  'doc_multi_delete': [
+    " supprime les traces sélectionnées.",
+    " deletes selected tracks.",
+    " elimina las pistas seleccionadas."
+  ],
+  'doc_multi_merge': [
+    " fusionne les traces sélectionnées en une seule.",
+    " merges selected tracks into one.",
+    " fusiona las pistas seleccionadas en una."
+  ],
+  'doc_multi_plus': [
+    " plus d'options pour la sélection : ",
+    " more options for the selection: ",
+    " más opciones pour la sélection : "
+  ],
   'doc_multi_plus_merge': [" Fusionner.", " Merge.", " Fusionar."],
   'doc_multi_plus_archive': [" Archiver.", " Archive.", " Archivar."],
   'doc_multi_plus_sort': [" Exporter.", " Export.", " Exportar."],
   'doc_notes_title': ["Notes et Photos", "Notes and Photos", "Notas y Fotos"],
-  'doc_notes_intro': ["Vous pouvez ajouter une note à votre position actuelle avec l'icône ", "You can add a note to your current position with the icon ", "Puede añadir une note à votre position actuelle con el icono "],
-  'doc_photos_intro': ["Prenez une photo liée à votre parcours avec ", "Take a photo related to your trip with ", "Tome una foto relacionada con su viaje con "],
-  'doc_notes_display': ["Les notes et photos apparaissent comme des marqueurs sur la trace lors de la consultation.", "Notes and photos appear as markers on the track during consultation.", "Las notes et photos apparaissent comme des marqueurs sur la trace lors de la consultation."],
-  'doc_notes_update': ["Vous pouvez modifier ou supprimer une note en appuyant sur son marqueur.", "You can edit or delete a note by tapping its marker.", "Puede editar o eliminar una nota tocando su marcador."],
-  'doc_photos_tile': ["Les photos peuvent être partagées ou enregistrées depuis la vue détaillée de la trace.", "Photos can be shared or saved from the track's detailed view.", "Las photos se peuvent compartir o enregistrar desde la vista detallada de la pista."],
+  'doc_notes_intro': [
+    "Vous pouvez ajouter une note à votre position actuelle avec l'icône ",
+    "You can add a note to your current position with the icon ",
+    "Puede añadir une note à votre position actuelle con el icono "
+  ],
+  'doc_photos_intro': [
+    "Prenez une photo liée à votre parcours avec ",
+    "Take a photo related to your trip with ",
+    "Tome una foto relacionada con su viaje con "
+  ],
+  'doc_notes_display': [
+    "Les notes et photos apparaissent comme des marqueurs sur la trace lors de la consultation.",
+    "Notes and photos appear as markers on the track during consultation.",
+    "Las notes et photos apparaissent comme des marqueurs sur la trace lors de la consultation."
+  ],
+  'doc_notes_update': [
+    "Vous pouvez modifier ou supprimer une note en appuyant sur son marqueur.",
+    "You can edit or delete a note by tapping its marker.",
+    "Puede editar o eliminar una nota tocando su marcador."
+  ],
+  'doc_photos_tile': [
+    "Les photos peuvent être partagées ou enregistrées depuis la vue détaillée de la trace.",
+    "Photos can be shared or saved from the track's detailed view.",
+    "Las photos se peuvent compartir o enregistrar desde la vista detallada de la pista."
+  ],
   'doc_archives_title': ["Archives", "Archives", "Archivos"],
-  'doc_archives_intro': ["L'archivage déplace vos traces vers un dossier compressé pour libérer de l'espace. Utilisez ", "Archiving moves your tracks to a compressed folder to save space. Use ", "El archivado mueve sus pistas a una carpeta comprimida para ahorrar espacio. Use "],
-  'doc_archives_usage': [" pour accéder aux archives et les restaurer si besoin.", " to access archives and restore them if needed.", " para acceder a los archivos y restaurarlos si es necesario."],
+  'doc_archives_intro': [
+    "L'archivage déplace vos traces vers un dossier compressé pour libérer de l'espace. Utilisez ",
+    "Archiving moves your tracks to a compressed folder to save space. Use ",
+    "El archivado mueve sus pistas a una carpeta comprimida para ahorrar espacio. Use "
+  ],
+  'doc_archives_usage': [
+    " pour accéder aux archives et les restaurer si besoin.",
+    " to access archives and restore them if needed.",
+    " para acceder a los archivos y restaurarlos si es necesario."
+  ],
   'doc_dest_title': ["Destinations", "Destinations", "Destinos"],
-  'doc_dest_create': ["Créez une destination en utilisant ", "Create a destination using ", "Cree un destino usando "],
-  'doc_dest_create_body': [" directement sur la carte.", " directement on the map.", " directamente en el mapa."],
-  'doc_dest_name_pos': ["Vous pouvez aussi nommer votre position actuelle comme destination avec ", "You can also name your current position as a destination with ", "También puede nombrar su posición actual comme un destination avec "],
-  'doc_dest_manage': ["Gérez vos destinations enregistrées via ", "Manage your saved destinations via ", "Gestione sus destinos guardados a través de "],
-  'doc_dest_change': ["Changez de destination active avec ", "Change active destination with ", "Cambie el destino activo con "],
-  'doc_dest_gmaps': ["Lancez un itinéraire vers la destination choisie dans Google Maps avec ", "Launch a route to the chosen destination in Google Maps with ", "Inicie una ruta al destino elegido en Google Maps con "],
-  'doc_dest_export': ["Exportez vos destinations avec ", "Export your destinations with ", "Exporte sus destinos con "],
-  'doc_dest_import': ["Importez des destinations avec ", "Import destinations with ", "Importe destinos con "],
-  'doc_dest_outro': ["Une ligne rouge en pointillés relie votre position à la destination choisie.", "A red dotted line connects your position to the chosen destination.", "Una línea de puntos roja conecta su position con le destino elegido."],
-  'doc_vac_title': ["Aérodromes et cartes VAC", "Aerodromes and VAC charts", "Aeródromos y cartas VAC"],
-  'doc_vac_body_1': ["Traceo affiche les aérodromes sur la carte. ", "Traceo displays aerodromes on the map. ", "Traceo muestra aeródromos en el mapa. "],
-  'doc_vac_body_2': ["Une icône orange ", "An orange icon ", "Un icono naranja "],
-  'doc_vac_body_3': [" indique que les informations sont disponibles mais la carte VAC n'est pas encore téléchargée.", " indicates information is available but the VAC chart is not yet downloaded.", " indica que la información está disponible pero la carta VAC aún no se ha descargado."],
-  'doc_vac_body_4': ["Appuyez sur un aérodrome pour voir ses détails. ", "Tap an aerodrome to see its details. ", "Toque un aeródromo para ver sus detalles. "],
-  'doc_vac_body_5': ["Les utilisateurs Premium peuvent télécharger les cartes VAC pour une utilisation hors ligne. ", "Premium users can download VAC charts for offline use. ", "Les utilisateurs Premium peuvent télécharger les cartes VAC pour une utilisation hors ligne. "],
+  'doc_dest_create': [
+    "Créez une destination en utilisant ",
+    "Create a destination using ",
+    "Cree un destino usando "
+  ],
+  'doc_dest_create_body': [
+    " directement sur la carte.",
+    " directement on the map.",
+    " directamente en el mapa."
+  ],
+  'doc_dest_name_pos': [
+    "Vous pouvez aussi nommer votre position actuelle comme destination avec ",
+    "You can also name your current position as a destination with ",
+    "También puede nombrar su posición actual comme un destination avec "
+  ],
+  'doc_dest_manage': [
+    "Gérez vos destinations enregistrées via ",
+    "Manage your saved destinations via ",
+    "Gestione sus destinos guardados a través de "
+  ],
+  'doc_dest_change': [
+    "Changez de destination active avec ",
+    "Change active destination with ",
+    "Cambie el destino activo con "
+  ],
+  'doc_dest_gmaps': [
+    "Lancez un itinéraire vers la destination choisie dans Google Maps avec ",
+    "Launch a route to the chosen destination in Google Maps with ",
+    "Inicie una ruta al destino elegido en Google Maps con "
+  ],
+  'doc_dest_export': [
+    "Exportez vos destinations avec ",
+    "Export your destinations with ",
+    "Exporte sus destinos con "
+  ],
+  'doc_dest_import': [
+    "Importez des destinations avec ",
+    "Import destinations with ",
+    "Importe destinos con "
+  ],
+  'doc_dest_outro': [
+    "Une ligne rouge en pointillés relie votre position à la destination choisie.",
+    "A red dotted line connects your position to the chosen destination.",
+    "Una línea de puntos roja conecta su position con le destino elegido."
+  ],
+  'doc_vac_title': [
+    "Aérodromes et cartes VAC",
+    "Aerodromes and VAC charts",
+    "Aeródromos y cartas VAC"
+  ],
+  'doc_vac_body_1': [
+    "Traceo affiche les aérodromes sur la carte. ",
+    "Traceo displays aerodromes on the map. ",
+    "Traceo muestra aeródromos en el mapa. "
+  ],
+  'doc_vac_body_2': [
+    "Une icône orange ",
+    "An orange icon ",
+    "Un icono naranja "
+  ],
+  'doc_vac_body_3': [
+    " indique que les informations sont disponibles mais la carte VAC n'est pas encore téléchargée.",
+    " indicates information is available but the VAC chart is not yet downloaded.",
+    " indica que la información está disponible pero la carta VAC aún no se ha descargado."
+  ],
+  'doc_vac_body_4': [
+    "Appuyez sur un aérodrome pour voir ses détails. ",
+    "Tap an aerodrome to see its details. ",
+    "Toque un aeródromo para ver sus detalles. "
+  ],
+  'doc_vac_body_5': [
+    "Les utilisateurs Premium peuvent télécharger les cartes VAC pour une utilisation hors ligne. ",
+    "Premium users can download VAC charts for offline use. ",
+    "Les utilisateurs Premium peuvent télécharger les cartes VAC pour une utilisation hors ligne. "
+  ],
   'doc_vac_body_6': ["Une icône verte ", "A green icon ", "Un icono verde "],
-  'doc_vac_body_7': [" confirme que la carte VAC est stockée localement.", " confirme que la carte VAC est stockée localement.", " confirma que la carta VAC está almacenada localmente."],
+  'doc_vac_body_7': [
+    " confirme que la carte VAC est stockée localement.",
+    " confirme que la carte VAC est stockée localement.",
+    " confirma que la carta VAC está almacenada localmente."
+  ],
   'doc_settings_title': ["Réglages", "Settings", "Ajustes"],
-  'doc_settings_intro': ["Personnalisez votre expérience dans le menu Paramètres :", "Customize your experience in the Settings menu:", "Personalice su experiencia en el menú Ajustes:"],
-  'doc_settings_units': ["Unités de mesure (Kilomètres ou Milles Nautiques).", "Units of measurement (Kilometers or Nautical Miles).", "Unidades de medida (Kilómetros ou Millas Náuticas)."],
-  'doc_settings_destline': ["Affichage de la ligne vers la destination et des marqueurs d'arrêt.", "Display of the line to the destination and stop markers.", "Visualización de la ligne au destino et marcadores de parada."],
-  'doc_premium_intro': ["Le Pack Premium débloque des fonctionnalités avancées :", "The Premium Pack unlocks advanced features:", "El Pack Premium débloque des fonctionnalités avancées :"],
-  'doc_premium_oaci': ["Accès aux cartes OACI aéronautiques détaillées.", "Access to detailed OACI aeronautical maps.", "Acceso a mapas aeronáuticos OACI detallados."],
-  'doc_premium_planning': ["Outil de préparation de vol et planification de navigation.", "Flight preparation and navigation planning tool.", "Herramienta de preparación de vuelo y planificación de navegación."],
-  'doc_final_title': ["Batterie et Consommation", "Battery and Consumption", "Batería et Consumo"],
-  'doc_final_body_1': ["L'utilisation continue du GPS en arrière-plan peut réduire considérablement l'autonomie de la batterie.", "Continuous use of GPS in the background can significantly reduce battery life.", "L'utilisation continue du GPS en arrière-plan peut réduire considérablement l'autonomie de la batterie."],
-  'doc_final_body_2': ["Il est recommandé d'utiliser un chargeur pendant les longs trajets.", "It is recommended to use a charger during long trips.", "Se recomienda usar un cargador durante viajes largos."],
-  'doc_final_body_3': ["Traceo continue d'enregistrer même si l'écran est éteint ou si vous utilisez une autre application.", "Traceo continues recording even if the screen is off or if you use another app.", "Traceo continúa grabando incluso si la pantalla está apagada o si usa otra aplicación."],
-  'doc_final_body_4': ["Pour arrêter complètement le service GPS, appuyez sur STOP dans l'application.", "To completely stop the GPS service, press STOP in the app.", "Para detener complètement le service GPS, presione STOP en la aplicación."],
-  'doc_close_app': ["Quitter l'application sans arrêter l'enregistrement laissera le GPS actif.", "Quitting the app without stopping recording will leave the GPS active.", "Salir de la aplicación sin detener la grabación dejará el GPS activo."],
+  'doc_settings_intro': [
+    "Personnalisez votre expérience dans le menu Paramètres :",
+    "Customize your experience in the Settings menu:",
+    "Personalice su experiencia en el menú Ajustes:"
+  ],
+  'doc_settings_units': [
+    "Unités de mesure (Kilomètres ou Milles Nautiques).",
+    "Units of measurement (Kilometers or Nautical Miles).",
+    "Unidades de medida (Kilómetros ou Millas Náuticas)."
+  ],
+  'doc_settings_destline': [
+    "Affichage de la ligne vers la destination et des marqueurs d'arrêt.",
+    "Display of the line to the destination and stop markers.",
+    "Visualización de la ligne au destino et marcadores de parada."
+  ],
+  'doc_premium_intro': [
+    "Le Pack Premium débloque des fonctionnalités avancées :",
+    "The Premium Pack unlocks advanced features:",
+    "El Pack Premium débloque des fonctionnalités avancées :"
+  ],
+  'doc_premium_oaci': [
+    "Accès aux cartes OACI aéronautiques détaillées.",
+    "Access to detailed OACI aeronautical maps.",
+    "Acceso a mapas aeronáuticos OACI detallados."
+  ],
+  'doc_premium_planning': [
+    "Outil de préparation de vol et planification de navigation.",
+    "Flight preparation and navigation planning tool.",
+    "Herramienta de preparación de vuelo y planificación de navegación."
+  ],
+  'doc_final_title': [
+    "Batterie et Consommation",
+    "Battery and Consumption",
+    "Batería et Consumo"
+  ],
+  'doc_final_body_1': [
+    "L'utilisation continue du GPS en arrière-plan peut réduire considérablement l'autonomie de la batterie.",
+    "Continuous use of GPS in the background can significantly reduce battery life.",
+    "L'utilisation continue du GPS en arrière-plan peut réduire considérablement l'autonomie de la batterie."
+  ],
+  'doc_final_body_2': [
+    "Il est recommandé d'utiliser un chargeur pendant les longs trajets.",
+    "It is recommended to use a charger during long trips.",
+    "Se recomienda usar un cargador durante viajes largos."
+  ],
+  'doc_final_body_3': [
+    "Traceo continue d'enregistrer même si l'écran est éteint ou si vous utilisez une autre application.",
+    "Traceo continues recording even if the screen is off or if you use another app.",
+    "Traceo continúa grabando incluso si la pantalla está apagada o si usa otra aplicación."
+  ],
+  'doc_final_body_4': [
+    "Pour arrêter complètement le service GPS, appuyez sur STOP dans l'application.",
+    "To completely stop the GPS service, press STOP in the app.",
+    "Para detener complètement le service GPS, presione STOP en la aplicación."
+  ],
+  'doc_close_app': [
+    "Quitter l'application sans arrêter l'enregistrement laissera le GPS actif.",
+    "Quitting the app without stopping recording will leave the GPS active.",
+    "Salir de la aplicación sin detener la grabación dejará el GPS activo."
+  ],
   'doc_simu_title': ["Simulation", "Simulation", "Simulación"],
-  'doc_simu_body': ["La fonction 'refaire le chemin d'une trace' vous permet de revivre une trace enregistrée comme si vous y étiez. ", "The Simulation feature allows you to replay a recorded track as if you were there. ", "La fonction 'refaire le chemin d'une trace' vous permet de revivre une trace enregistrée comme si vous y étiez. "],
-  'doc_simu_usage': ["Accédez-y via 'Simulation' dans le menu. Vous pouvez ajuster la vitesse de lecture pendant la simulation.", "Access it via 'Simulation' in the menu. You can adjust the playback speed during the simulation.", "Acceda a ella a través de 'Simulación' en el menú. Puede ajustar la velocidad de reproducción durante la simulación."],
+  'doc_simu_body': [
+    "La fonction 'refaire le chemin d'une trace' vous permet de revivre une trace enregistrée comme si vous y étiez. ",
+    "The Simulation feature allows you to replay a recorded track as if you were there. ",
+    "La fonction 'refaire le chemin d'une trace' vous permet de revivre une trace enregistrée comme si vous y étiez. "
+  ],
+  'doc_simu_usage': [
+    "Vous pouvez ajuster la vitesse de lecture et appuyer sur le bouton ",
+    "You can adjust the playback speed and tap the button ",
+    "Puede ajustar la velocidad de reproducción y tocar el botón "
+  ],
+  'doc_simu_usage_2': [
+    " pour ouvrir Google Maps orienté dans la direction du parcours.",
+    " to open Google Maps oriented in the direction of the track.",
+    " para abrir Google Maps orientado en la dirección de la pista."
+  ]
+
 };
 
 String ol(String key) {
@@ -338,7 +1050,6 @@ String affTime(String timeInSeconds, [bool showSeconds = true]) {
     return "${s}s";
   }
 }
-
 
 Future<String> formatTrackName(DateTime time) async {
   return DateFormat("d MMMM yyyy HH'h'mm", 'fr_FR').format(time);

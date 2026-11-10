@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -52,6 +54,7 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   double _simulationSpeed = 1.0;
   double _currentZoom = 14.4746;
   DateTime? _lastProcessedTime;
+  DateTime? _lastCameraUpdate;
 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
@@ -61,8 +64,9 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   BitmapDescriptor? _noteIcon;
   BitmapDescriptor? _pauseIcon;
   BitmapDescriptor? _photoIcon;
-
   bool _isLoading = true;
+
+
   bool _isSaving = false;
   SimulationState _simulationState = SimulationState.stopped;
   bool _isTopDownView = true;
@@ -520,25 +524,41 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _startSimulation(String trackName, {bool archived = false}) async {
+    _positionStream?.cancel();
+    _simulationTimer?.cancel();
+    _positionStream = null;
+    _simulationTimer = null;
+    _lastProcessedTime = null;
+
     final locaData = context.read<LocaData>();
+    locaData.reset();
+
     final trackData = context.read<TrackData>();
     final messenger = ScaffoldMessenger.of(context);
-    if (locaData.isTracking) _resetAllActivities();
     final String basePath = archived ? trackData.archivePath : trackData.trackPath;
     final file = File(p.join(basePath, '$trackName.txt'));
-    if (!await file.exists()) return;
+    debugPrint("START SIMULATION: path = ${file.path}, exists = ${await file.exists()}");
+    if (!await file.exists()) {
+      debugPrint("TRACK FILE DOES NOT EXIST: ${file.path}");
+      if (mounted) messenger.showSnackBar(SnackBar(content: Text("File not found: $trackName")));
+      return;
+    }
     final lines = await file.readAsLines();
+    debugPrint("TRACK FILE READ: lines count = ${lines.length}");
     if (!mounted) return;
     
-    // Détection plus robuste du flag isFlight (en ignorant la casse et les espaces éventuels)
     bool isFlight = lines.any((l) => l.toLowerCase().contains("isflight:true"));
     
     final List<Position> simulatedPositions = [];
-    for (final line in lines.skip(7)) {
-      if (line.toLowerCase().startsWith("isflight:")) continue;
-      final parts = line.split(' ');
+    for (final line in lines) {
+      final trimmed = line.trim();
+      if (trimmed.isEmpty) continue;
+      final parts = trimmed.split(' ');
       if (parts.length >= 4) {
-        final lat = double.tryParse(parts[0]), lon = double.tryParse(parts[1]), alt = double.tryParse(parts[2]), time = DateTime.tryParse(parts[3]);
+        final lat = double.tryParse(parts[0]);
+        final lon = double.tryParse(parts[1]);
+        final alt = double.tryParse(parts[2]);
+        final time = DateTime.tryParse(parts[3]);
         if (lat != null && lon != null && alt != null && time != null) {
           double speed = 0;
           if (simulatedPositions.isNotEmpty) {
@@ -557,13 +577,33 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
         }
       }
     }
-    if (simulatedPositions.isEmpty) { if (mounted) messenger.showSnackBar(SnackBar(content: Text(ol('no_simulation_data')))); return; }
-    await _resetMapState(trackName, simulatedPositions.first);
-    if (!mounted) return;
+    debugPrint("PARSED simulatedPositions count = ${simulatedPositions.length}");
+    if (simulatedPositions.isEmpty) {
+      debugPrint("SIMULATION POSITIONS EMPTY!");
+      if (mounted) messenger.showSnackBar(SnackBar(content: Text(ol('no_simulation_data'))));
+      return;
+    }
     
-    // On passe le flag isFlight à locaData pour qu'it soit partagé correctement
     locaData.setSimulationData(simulatedPositions, isFlight: isFlight);
-    _resumeSimulation();
+    if (locaData.activeTarget == null) {
+      locaData.updateActiveTarget(Home(name: ol('start_point'), latitude: simulatedPositions.first.latitude, longitude: simulatedPositions.first.longitude), simulatedPositions.first);
+    }
+
+    setState(() {
+      _polylines.clear();
+      _markers.clear();
+      _simulationIndex = 0;
+      _simulationSpeed = 1.0;
+      _simulationState = SimulationState.running;
+      _currentPosition = simulatedPositions.first;
+      _actualTitle = ol('start_simulation');
+    });
+
+    if (locaData.activeTarget != null) {
+      _addOrUpdateHomeMarker(locaData.activeTarget!);
+    }
+
+    _startSimulationTimer();
   }
 
   void _resumeSimulation() {
@@ -577,9 +617,15 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   void _startSimulationTimer() {
     _simulationTimer?.cancel();
     final locaData = context.read<LocaData>();
+    debugPrint("START SIMULATION TIMER: simulationData length = ${locaData.simulationData.length}, speed = $_simulationSpeed");
     _simulationTimer = Timer.periodic(Duration(milliseconds: (1000 / _simulationSpeed).round()), (timer) {
-      if (_simulationIndex >= locaData.simulationData.length) { _stopSimulation(naturalEnd: true); return; }
+      if (_simulationIndex >= locaData.simulationData.length) {
+        debugPrint("SIMULATION ENDED naturally at index $_simulationIndex");
+        _stopSimulation(naturalEnd: true);
+        return;
+      }
       final currentSimulatedPosition = locaData.simulationData[_simulationIndex];
+      debugPrint("SIMULATION TICK: index=$_simulationIndex, pos=${currentSimulatedPosition.latitude},${currentSimulatedPosition.longitude}");
       _processNewPosition(currentSimulatedPosition);
       final String key = currentSimulatedPosition.timestamp.toLocal().toIso8601String().split('.')[0];
       final bool hasNote = locaData.notes.containsKey(key), hasPhoto = locaData.photos.containsKey(key);
@@ -596,10 +642,26 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
   void _processNewPosition(Position position) {
     if (Platform.isIOS && _simulationState == SimulationState.stopped) { if (_lastProcessedTime != null && position.timestamp.difference(_lastProcessedTime!).inSeconds < 3) return; _lastProcessedTime = position.timestamp; }
     final locaData = context.read<LocaData>();
-    if (!locaData.updatePosition(position)) return;
+    if (_simulationState != SimulationState.stopped) {
+      locaData.updateSimulationPosition(position);
+    } else {
+      if (!locaData.updatePosition(position)) return;
+    }
     double newHeading = (locaData.trace.length > 1) ? Geolocator.bearingBetween(locaData.trace[locaData.trace.length-2].latitude, locaData.trace[locaData.trace.length-2].longitude, position.latitude, position.longitude) : position.heading;
     final posWithHeading = Position.fromMap({...position.toJson(), 'heading': newHeading});
-    if (mounted) { setState(() { _currentPosition = posWithHeading; _updateLivePolyline(locaData.trace.map((p) => LatLng(p.latitude, p.longitude)).toList()); _updateCurrentPositionMarker(); _updateDestinationLine(); }); _animateCameraToPosition(posWithHeading); }
+    if (mounted) {
+      setState(() {
+        _currentPosition = posWithHeading;
+        _updateLivePolyline(locaData.trace.map((p) => LatLng(p.latitude, p.longitude)).toList());
+        _updateCurrentPositionMarker();
+        _updateDestinationLine();
+      });
+      final now = DateTime.now();
+      if (_lastCameraUpdate == null || now.difference(_lastCameraUpdate!).inMilliseconds > (_simulationSpeed > 1 ? 500 : 200)) {
+        _lastCameraUpdate = now;
+        _animateCameraToPosition(posWithHeading);
+      }
+    }
   }
 
   void _updateLivePolyline(List<LatLng> points) { _polylines.removeWhere((p) => p.polylineId.value == 'live'); _polylines.add(Polyline(polylineId: const PolylineId('live'), points: points, color: Colors.blue, width: 5)); }
@@ -913,8 +975,33 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
       IconButton(icon: const Icon(Icons.fast_rewind), onPressed: () => setState(() { _simulationSpeed = (_simulationSpeed - 1.0).clamp(1.0, 10.0); if(_simulationState == SimulationState.running) _startSimulationTimer(); }), tooltip: ol('simulation_speed_decrease')), 
       Text('x${_simulationSpeed.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold)), 
       IconButton(icon: const Icon(Icons.fast_forward), onPressed: () => setState(() { _simulationSpeed = (_simulationSpeed + 1.0).clamp(1.0, 10.0); if(_simulationState == SimulationState.running) _startSimulationTimer(); }), tooltip: ol('simulation_speed_increase')), 
+      IconButton(icon: const Icon(Icons.streetview, color: Colors.blue), onPressed: _launchStreetView, tooltip: ol('street_view')),
       IconButton(icon: const Icon(Icons.bar_chart, color: Colors.brown), onPressed: () => Navigator.pushNamed(context, StatsScreen.id), tooltip: ol('trip_stats'))
     ]);
+  }
+
+  Future<void> _launchStreetView() async {
+    if (_currentPosition == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(ol('no_position_available'))),
+      );
+      return;
+    }
+    final url = Uri.parse(
+        'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${_currentPosition!.latitude},${_currentPosition!.longitude}');
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        final fallbackUrl = Uri.parse(
+            'https://www.google.com/maps?layer=c&cbll=${_currentPosition!.latitude},${_currentPosition!.longitude}');
+        await launchUrl(fallbackUrl, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${ol('error_prefix')} $e')),
+        );
+      }
+    }
   }
 
   void _handleSimulate() async { final n = Navigator.of(context); if (context.read<LocaData>().isTracking) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ol('simulation_disabled_during_tracking')))); return; } n.pop(); final result = await n.pushNamed(TracksScreen.id, arguments: true); if (result is Map && result['name'] is String) _startSimulation(result['name'], archived: result['archived'] ?? false); }

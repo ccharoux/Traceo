@@ -48,6 +48,55 @@ class AppDrawer extends StatelessWidget {
     }
   }
 
+  void _showGoogleMapsOptions(BuildContext context, Home target) {
+    Navigator.pop(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(ol('google_maps_route')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.directions, color: Colors.blue),
+              title: Text(ol('google_maps_route')),
+              onTap: () {
+                Navigator.pop(context);
+                _launchGoogleMapsNavigation(context, target);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.streetview, color: Colors.orange),
+              title: Text(ol('street_view')),
+              onTap: () {
+                Navigator.pop(context);
+                _launchGoogleMapsStreetView(context, target);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchGoogleMapsStreetView(BuildContext context, Home target) async {
+    final url = Uri.parse(
+        'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${target.latitude},${target.longitude}');
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        final fallbackUrl = Uri.parse(
+            'https://www.google.com/maps?layer=c&cbll=${target.latitude},${target.longitude}');
+        await launchUrl(fallbackUrl, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${ol('error_prefix')} $e')),
+        );
+      }
+    }
+  }
+
   void _showSettingsDialog(BuildContext context) {
     final isPremium = context.read<PremiumState>().isPremium;
     context.read<SettingsState>().updateCacheInfo();
@@ -281,7 +330,7 @@ class AppDrawer extends StatelessWidget {
                   title: Text(ol('google_maps_route')),
                   enabled: activeTarget != null,
                   onTap: activeTarget != null
-                      ? () => _launchGoogleMapsNavigation(context, activeTarget!)
+                      ? () => _showGoogleMapsOptions(context, activeTarget!)
                       : null,
                 ),
                 const Divider(),
